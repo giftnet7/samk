@@ -3,2751 +3,815 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ታዳጊ</title>
-    <link rel="icon" type="image/x-icon" href="44.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Updated CDN links with fallbacks -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdn.sheetjs.com/xlsx-0.18.5/package/dist/xlsx.full.min.js"></script>
+    <title>💍Wedding Gallery</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
+        /* Custom Fonts and Animation Styling */
+        * {
+            font-family: 'Montserrat', sans-serif;
         }
-        .hidden {
-            display: none;
+        .script-font {
+            font-family: 'Great Vibes', cursive;
         }
-        .status-btn {
-            min-width: 80px;
-        }
-        .student-card {
-            transition: all 0.3s ease;
-        }
-        .student-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
+        .serif-font {
+            font-family: 'Cormorant Garamond', serif;
         }
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .download-btn {
-            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
-        .download-btn:hover {
-            background: linear-gradient(to right, #3a8fd4 0%, #00c9d4 100%);
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1) rotate(180deg); }
         }
-        .excel-btn {
-            background: linear-gradient(to right, #21a366 0%, #33c481 100%);
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
-        .excel-btn:hover {
-            background: linear-gradient(to right, #1a8a57 0%, #2aac70 100%);
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
         }
-        .reset-btn {
-            background: linear-gradient(to right, #ff5e62 0%, #ff9966 100%);
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
         }
-        .reset-btn:hover {
-            background: linear-gradient(to right, #e05557 0%, #e58a5c 100%);
+        .heartbeat {
+            animation: heartbeat 1.5s ease-in-out infinite;
         }
-        .delete-btn {
-            background: linear-gradient(to right, #ff5e62 0%, #ff9966 100%);
-        }
-        .delete-btn:hover {
-            background: linear-gradient(to right, #e05557 0%, #e58a5c 100%);
-        }
-        .connection-status {
-            background-color: #fffbeb;
-            border-left: 4px solid #f59e0b;
-        }
-        .search-highlight {
-            background-color: #ffeb3b;
-            padding: 0 2px;
-            border-radius: 2px;
-        }
-        .summary-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .date-history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-        .status-icon {
-            font-size: 1.2rem;
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 30px;
-        }
-        .present-icon {
-            background-color: #10B981;
-            color: white;
-        }
-        .absent-icon {
-            background-color: #EF4444;
-            color: white;
-        }
-        .alert-badge {
+        .sparkle {
             position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: #EF4444;
-            color: white;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #fff 0%, transparent 70%);
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
+            animation: sparkle 2s ease-in-out infinite;
         }
-        .alert-student {
-            border-left: 4px solid #EF4444;
-            background-color: #FEF2F2;
+        .photo-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .date-range-container {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
+        .photo-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
-        .date-range-input {
-            flex: 1;
-            min-width: 140px;
+        .photo-card:hover img {
+            transform: scale(1.1);
         }
-        .summary-search-highlight {
-            background-color: #ffeb3b;
-            border-radius: 3px;
-            padding: 0 2px;
+        .photo-card img {
+            transition: transform 0.6s ease;
         }
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 16px;
+        .category-btn.active {
+            background: linear-gradient(135deg, #b76e79 0%, #c9a87c 100%);
+            color: white;
         }
-        .history-table th, .history-table td {
-            border: 1px solid #e5e7eb;
-            padding: 8px 12px;
-            text-align: left;
+        /* Masonry Layout for Gallery */
+        .gallery-masonry {
+            column-count: 3;
+            column-gap: 1.5rem;
         }
-        .history-table th {
-            background-color: #f9fafb;
-            font-weight: 600;
+        @media (max-width: 1024px) {
+            .gallery-masonry {
+                column-count: 2;
+            }
         }
-        .history-table tr:nth-child(even) {
-            background-color: #f9fafb;
+        @media (max-width: 640px) {
+            .gallery-masonry {
+                column-count: 1;
+            }
         }
-        .history-table tr:hover {
-            background-color: #f3f4f6;
+        .gallery-masonry .photo-card {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
         }
-        .present-cell {
-            background-color: #dcfce7;
-            color: #166534;
-            text-align: center;
-            font-weight: 600;
+        .rose-gold-gradient {
+            background: linear-gradient(135deg, #b76e79 0%, #c9a87c 100%);
         }
-        .absent-cell {
-            background-color: #fee2e2;
-            color: #991b1b;
-            text-align: center;
-            font-weight: 600;
+        .overlay-gradient {
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
         }
-        .toggle-history-btn {
-            background: linear-gradient(to right, #8b5cf6 0%, #a855f7 100%);
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
-        .toggle-history-btn:hover {
-            background: linear-gradient(to right, #7c3aed 0%, #9333ea 100%);
+        ::-webkit-scrollbar-track {
+            background: #fdf6f0;
         }
-        .scrollable-table {
-            overflow-x: auto;
-            max-width: 100%;
-            margin-top: 16px;
-        }
-        .absence-dates {
-            font-size: 0.875rem;
-            color: #6b7280;
-            margin-top: 4px;
-        }
-        .absence-date {
-            display: inline-block;
-            background-color: #fee2e2;
-            color: #991b1b;
-            padding: 2px 6px;
+        ::-webkit-scrollbar-thumb {
+            background: #b76e79;
             border-radius: 4px;
-            margin-right: 6px;
-            margin-bottom: 4px;
-            font-size: 0.75rem;
         }
-        .alert-details {
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px dashed #fca5a5;
-        }
-        .gender-filter {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-        .gender-btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
+        /* Music Player Styling */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50px;
+            padding: 10px 20px;
+            box-shadow: 0 10px 30px rgba(183, 110, 121, 0.3);
+            backdrop-filter: blur(10px);
             transition: all 0.3s ease;
         }
-        .gender-btn.active {
-            background-color: #4F46E5;
-            color: white;
+        .music-player.hidden {
+            transform: translateY(100px);
+            opacity: 0;
+            pointer-events: none;
         }
-        .gender-btn.inactive {
-            background-color: #E5E7EB;
-            color: #4B5563;
+        .music-player.visible {
+            transform: translateY(0);
+            opacity: 1;
         }
-        .gender-tag {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-left: 8px;
+        .music-icon {
+            animation: pulse 2s infinite;
         }
-        .male-tag {
-            background-color: #DBEAFE;
-            color: #1E40AF;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
-        .female-tag {
-            background-color: #FCE7F3;
-            color: #9D174D;
+        .volume-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100px;
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            outline: none;
         }
-        .edit-mode {
-            background-color: #fef3c7;
-            border: 1px dashed #f59e0b;
-        }
-        .permission-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-left: 8px;
-            background-color: #fef3c7;
-            color: #92400e;
-        }
-        .admin-badge {
-            background-color: #fef3c7;
-            color: #92400e;
-        }
-        .user-badge {
-            background-color: #dbeafe;
-            color: #1e40af;
-        }
-        .permission-cell {
-            background-color: #fef3c7;
-            color: #92400e;
-            text-align: center;
-            font-weight: 600;
-        }
-        .session-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-left: 8px;
-            background-color: #dbeafe;
-            color: #1e40af;
-        }
-        .permission-btn {
-            background-color: #fbbf24;
-            color: #92400e;
-        }
-        .permission-btn:hover {
-            background-color: #f59e0b;
-        }
-        .permission-btn.active {
-            background-color: #d97706;
-            color: white;
-        }
-        .session-selector {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-        .session-btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 600;
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #b76e79;
+            border-radius: 50%;
             cursor: pointer;
-            background-color: #e5e7eb;
-            color: #4b5563;
-            transition: all 0.3s ease;
-        }
-        .session-btn.active {
-            background-color: #4F46E5;
-            color: white;
-        }
-        .permission-info {
-            font-size: 0.875rem;
-            color: #92400e;
-            background-color: #fef3c7;
-            padding: 8px;
-            border-radius: 8px;
-            margin-top: 8px;
-            margin-bottom: 16px;
-        }
-        .permission-warning {
-            color: #dc2626;
-            font-weight: 600;
-        }
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #6b7280;
-        }
-        .error-message {
-            background-color: #fee2e2;
-            border: 1px solid #ef4444;
-            color: #991b1b;
-            padding: 16px;
-            border-radius: 8px;
-            margin: 10px 0;
         }
     </style>
 </head>
-<body class="min-h-screen p-4 sm:p-8 flex flex-col items-center">
-    <div class="w-full max-w-6xl bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-gray-900">
-        <h1 class="text-3xl sm:text-4xl font-bold text-center text-indigo-600 mb-2">ፈለገ ህይወት ሰ/ት/ቤት</h1>
-        <p class="text-center text-sm sm:text-base text-gray-600 mb-6">ታዳጊ - መ ስም መጥሪያ</p>
-
-        <!-- Navigation Buttons -->
-        <div class="flex justify-center gap-4 mb-6">
-            <button id="showDailyBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-                Daily Attendance
+<body class="bg-gradient-to-br from-rose-50 via-amber-50 to-rose-100 min-h-screen">
+    
+    <!-- Music Player (Fixed at bottom right) -->
+    <div id="musicPlayer" class="music-player hidden">
+        <div class="flex items-center gap-3">
+            <button id="musicToggle" class="bg-rose-500 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-rose-600 transition">
+                <i id="musicIcon" class="fas fa-pause"></i>
             </button>
-            <button id="showAdminBtn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 relative">
-                Admin Panel
-                <span id="adminAlertBadge" class="alert-badge hidden">0</span>
+            <div class="flex-1">
+                <p class="text-sm font-medium text-rose-700">በቃና ዘገሊላ</p>
+                <p class="text-xs text-amber-600"></p>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fas fa-volume-low text-rose-400"></i>
+                <input id="volumeSlider" type="range" min="0" max="100" value="50" class="volume-slider">
+            </div>
+            <button id="musicClose" class="text-gray-400 hover:text-rose-500">
+                <i class="fas fa-times"></i>
             </button>
         </div>
+    </div>
 
-        <!-- Daily Attendance Section -->
-        <div id="dailyAttendanceSection">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Daily Attendance</h2>
-            
-            <!-- Date and Session Selection -->
-            <div class="flex flex-col mb-4">
-                <div class="flex justify-between items-center mb-2">
-                    <label for="date-picker" class="text-sm font-semibold text-gray-700">Select Attendance Date</label>
-                    <span id="sessionIndicator" class="text-sm font-semibold text-indigo-600">Session: Morning</span>
-                </div>
-                <input type="date" id="date-picker" class="p-3 rounded-lg border-2 border-gray-300 bg-gray-100 text-gray-900 focus:outline-none focus:border-indigo-500 mb-4">
-                
-                <!-- Session Selector -->
-                <div class="session-selector">
-                    <button id="sessionMorning" class="session-btn active">ትምህርት</button>
-                    <button id="sessionAfternoon" class="session-btn">መዝሙር</button>
-                    <button id="sessionEvening" class="session-btn">other</button>
-                </div>
+    <!-- Landing Page (Initial View) -->
+    <div id="landingPage" class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-rose-50 via-amber-50 to-rose-100">
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="sparkle" style="top: 20%; left: 10%; animation-delay: 0s;"></div>
+            <div class="sparkle" style="top: 30%; left: 80%; animation-delay: 0.5s;"></div>
+            <div class="sparkle" style="top: 60%; left: 20%; animation-delay: 1s;"></div>
+            <div class="sparkle" style="top: 70%; left: 70%; animation-delay: 1.5s;"></div>
+            <div class="sparkle" style="top: 40%; left: 50%; animation-delay: 0.8s;"></div>
+        </div>
+        <div class="text-center p-8 relative z-10">
+            <div class="float-animation mb-6">
+                <i class="fas fa-heart text-6xl md:text-8xl text-rose-400 heartbeat"></i>
             </div>
-            
-            <!-- Gender Filter -->
-            <div class="gender-filter">
-                <button id="allGenderBtn" class="gender-btn active">All</button>
-                <button id="maleGenderBtn" class="gender-btn inactive">Male</button>
-                <button id="femaleGenderBtn" class="gender-btn inactive">Female</button>
+            <p class="text-rose-400 tracking-[0.3em] uppercase text-sm mb-4">The Wedding of</p>
+            <h1 class="script-font text-5xl md:text-8xl text-rose-700 mb-2">ዮኒ & ሜሊ</h1>
+            <p class="serif-font text-2xl md:text-3xl text-amber-700 mb-2">መስከረም 12 , 2017</p>
+            <p class="text-rose-500 mb-8 serif-font text-lg"></p>
+            <div class="flex items-center justify-center gap-4 mb-8">
+                <div class="w-16 h-px bg-rose-300"></div>
+                <i class="fas fa-ring text-amber-500"></i>
+                <div class="w-16 h-px bg-rose-300"></div>
             </div>
-            
-            <!-- Search Box -->
-            <div class="mb-4">
-                <label for="studentSearch" class="mb-2 text-sm font-semibold text-gray-700">Search Students</label>
-                <input type="text" id="studentSearch" placeholder="Type to search students..." class="w-full p-3 rounded-lg border-2 border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-indigo-500">
-            </div>
-            
-            <div id="permissionInfo" class="permission-info hidden">
-                <!-- Permission info will be displayed here -->
-            </div>
-            
-            <div id="dailyAttendanceContainer" class="space-y-4">
-                <div class="loading">Loading students...</div>
-            </div>
-            
-            <div class="flex justify-center mt-4">
-                <button id="finalizeButton" type="button" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 transform hover:scale-105">
-                    Save Attendance
+            <button id="enterGalleryBtn" class="rose-gold-gradient text-white font-medium py-4 px-10 rounded-full text-lg transition transform hover:scale-105 hover:shadow-xl">
+                <i class="fas fa-camera mr-2"></i> Enter Gallery
+            </button>
+            <!-- Music Toggle Button for Landing Page -->
+            <div class="mt-8">
+                <button id="landingMusicToggle" class="flex items-center gap-2 px-5 py-2 rounded-full border border-rose-300 text-rose-600 hover:bg-rose-50 transition">
+                    <i id="landingMusicIcon" class="fas fa-music music-icon"></i>
+                    <span id="landingMusicText">Play Music</span>
                 </button>
             </div>
-            <div id="exportMessage" class="text-center text-sm my-2 text-gray-600"></div>
         </div>
+    </div>
 
-        <!-- Admin Password Section -->
-        <div id="adminPasswordSection" class="hidden">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Admin Access</h2>
-            <div class="bg-gray-100 p-6 rounded-xl shadow-md flex flex-col items-center">
-                <p class="mb-4 text-center text-gray-700">Please enter the password to access the Admin Panel.</p>
-                <input type="password" id="adminPasswordInput" placeholder="Enter password" class="w-full max-w-xs p-3 rounded-lg border-2 border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-indigo-500 mb-4 text-center">
-                <button id="submitPasswordBtn" type="button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 transform hover:scale-105">
-                    Submit
-                </button>
-                <p id="passwordMessage" class="mt-4 text-sm text-red-500"></p>
-            </div>
-        </div>
-
-        <!-- Admin Panel Section -->
-        <div id="adminSection" class="hidden">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Admin Panel</h2>
-
-            <!-- Permission Management Section -->
-            <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-xl mb-6">
-                <h3 class="text-xl font-bold mb-2 text-yellow-800">Permission Management</h3>
-                
-                <!-- Add Permission -->
-                <div class="flex flex-col sm:flex-row gap-3 mb-4">
-                    <select id="permissionStudentSelect" class="flex-grow p-3 rounded-lg border-2 border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-indigo-500">
-                        <!-- Students will be populated here -->
-                    </select>
-                    <input type="date" id="permissionDate" class="p-3 rounded-lg border-2 border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-indigo-500">
-                    <button id="addPermissionBtn" type="button" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300">
-                        Add Permission
-                    </button>
-                </div>
-                
-                <!-- Permission Limits Info -->
-                <div class="bg-yellow-100 p-3 rounded-lg mb-4">
-                    <p class="text-sm text-yellow-800">
-                        <strong>Note:</strong> Students can have maximum 3 permissions per month. 
-                        Permission counts as Present attendance.
-                    </p>
-                </div>
-                
-                <!-- Active Permissions List -->
-                <div id="permissionList" class="space-y-2 max-h-48 overflow-y-auto">
-                    <!-- Permissions will be rendered here -->
-                </div>
-            </div>
-
-            <!-- Absence Alerts Section -->
-            <div id="absenceAlertsContainer" class="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
-                <h3 class="text-xl font-bold mb-2 text-red-800 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                    </svg>
-                    Absence Alerts (Last 3 Months)
-                </h3>
-                <p class="text-sm text-red-600 mb-3">Students with 10 or more absences in the last 3 months:</p>
-                <div id="absenceAlertsList" class="space-y-2">
-                    <!-- Alerts will be populated here -->
-                </div>
-            </div>
-
-            <!-- Master Student List Management -->
-            <div class="bg-gray-100 p-4 rounded-xl mb-6">
-                <h3 class="text-xl font-bold mb-2">Manage Student Roster</h3>
-                <div class="flex flex-col sm:flex-row gap-3 mb-4">
-                    <input type="text" id="newStudentName" placeholder="Enter new student name" class="flex-grow p-3 rounded-lg border-2 border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-indigo-500">
-                    <select id="newStudentGender" class="p-3 rounded-lg border-2 border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-indigo-500">
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                    </select>
-                    <button id="addStudentBtn" type="button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 transform hover:scale-105">
-                        Add Student
-                    </button>
-                </div>
-                <div id="masterStudentList" class="space-y-2 max-h-48 overflow-y-auto">
-                    <!-- Master students will be rendered here -->
-                </div>
-            </div>
-
-            <!-- Attendance Summary -->
-            <div>
-                <h3 class="text-xl font-bold mb-2">Attendance Summary (Cumulative)</h3>
-                
-                <!-- Date Range Selector -->
-                <div class="mb-4 bg-blue-50 p-4 rounded-lg">
-                    <h4 class="font-semibold text-blue-800 mb-2">Select Date Range</h4>
-                    <div class="date-range-container">
-                        <div class="date-range-input">
-                            <label for="startDate" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                            <input type="date" id="startDate" class="w-full p-2 rounded border border-gray-300">
+    <!-- Main Gallery Content -->
+    <div id="mainGallery" class="hidden">
+        
+        <!-- Combined Navigation Wrapper (Header + Category Filter) - Fixed and full width -->
+        <div id="smartNavWrapper" class="fixed top-0 left-0 right-0 z-40">
+            
+            <!-- Header (Fixed Navigation) - White Background Applied Here -->
+            <header class="bg-white/90 backdrop-blur-md shadow-lg">
+                <div class="max-w-7xl mx-auto px-4 py-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-heart text-rose-400 text-xl"></i>
+                            <div>
+                                <h1 class="script-font text-2xl md:text-3xl text-rose-700">ዮኒ & ሜሊ</h1>
+                                <p class="text-xs text-amber-600 tracking-wider">መስከረም 12 , 2017</p>
+                            </div>
                         </div>
-                        <div class="date-range-input">
-                            <label for="endDate" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-                            <input type="date" id="endDate" class="w-full p-2 rounded border border-gray-300">
-                        </div>
-                        <div class="flex items-end">
-                            <button id="applyDateRange" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 h-10">
-                                Apply
+                        <!-- Controls: Slideshow and Download All -->
+                        <div class="flex items-center gap-3 md:gap-4 flex-wrap justify-end">
+                            <button id="downloadAllBtn" class="flex items-center gap-2 px-3 md:px-4 py-2 bg-rose-400 text-white rounded-full hover:bg-rose-500 transition text-sm md:text-base">
+                                <i class="fas fa-file-arrow-down"></i> Download All
+                            </button>
+                            <button id="slideshowBtn" class="flex items-center gap-2 px-3 md:px-4 py-2 border border-rose-300 text-rose-600 rounded-full hover:bg-rose-50 transition text-sm md:text-base">
+                                <i class="fas fa-play"></i> Slideshow
                             </button>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Summary Search Box -->
-                <div class="mb-4">
-                    <label for="summarySearch" class="block text-sm font-medium text-gray-700 mb-1">Search Students in Summary</label>
-                    <input type="text" id="summarySearch" placeholder="Type to search students in summary..." class="w-full p-3 rounded-lg border-2 border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-indigo-500">
-                </div>
+            </header>
 
-                <!-- Toggle between summary and detailed history -->
-                <div class="flex gap-2 mb-4">
-                    <button id="showSummaryView" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-300">
-                        Summary View
-                    </button>
-                    <button id="showHistoryView" class="toggle-history-btn text-white font-bold py-2 px-4 rounded transition duration-300">
-                        Detailed History
-                    </button>
-                </div>
-                
-                <!-- Summary View -->
-                <div id="summaryView">
-                    <div id="attendanceSummary" class="space-y-4">
-                        <!-- Summary will be rendered here -->
-                    </div>
-                </div>
-
-                <!-- Detailed History View -->
-                <div id="detailedHistoryView" class="hidden">
-                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                        <p class="text-sm text-gray-600">Showing detailed attendance history for all dates. Scroll horizontally to see all dates.</p>
-                    </div>
-                    <div class="scrollable-table">
-                        <table id="completeHistoryTable" class="history-table">
-                            <thead>
-                                <tr>
-                                    <th>Student</th>
-                                    <!-- Dates will be added here dynamically -->
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Student rows will be added here dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <!-- PDF Export and Reset Buttons -->
-                <div class="summary-actions">
-                    <button id="saveSummaryPdfBtn" type="button" class="download-btn text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-                        Save Summary to PDF
-                    </button>
-                    <button id="saveHistoryExcelBtn" type="button" class="excel-btn text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-                        Export History to Excel
-                    </button>
-                    <button id="resetSummaryBtn" type="button" class="reset-btn text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-                        Reset All Data
-                    </button>
-                </div>
-            </div>
-
-            <!-- New Section: Attendance History by Date -->
-            <div class="mt-8">
-                <h3 class="text-xl font-bold mb-2">Attendance History by Date</h3>
-                <div id="dateHistoryList" class="space-y-2">
-                    <!-- List of finalized dates will be rendered here -->
-                </div>
-                <div id="dateDetailView" class="mt-4 space-y-4 hidden">
-                    <h4 id="historyDateTitle" class="text-lg font-semibold"></h4>
-                    <div id="historyDetailContainer" class="space-y-2">
-                        <!-- Detailed attendance for a selected date will be rendered here -->
-                    </div>
-                    <div class="flex justify-between gap-4">
-                        <button id="closeDateViewBtn" type="button" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 mt-4 flex-grow">
-                            Back to Dates
+            <!-- Category Filter - Transparent Background. Added classes for smooth transition. -->
+            <section id="categoryNav" class="px-4 pb-4 pt-2 border-t border-rose-100/50 transition-all duration-300 ease-in-out max-h-96 opacity-100 overflow-hidden">
+                <div class="max-w-7xl mx-auto">
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <button class="category-btn active px-5 py-2 rounded-full border border-rose-300 text-rose-700 font-medium transition hover:bg-rose-100" data-category="all">
+                            <i class="fas fa-th mr-2"></i>All Photos
                         </button>
-                        <button id="saveExcelBtn" type="button" class="excel-btn text-white font-bold py-2 px-4 rounded-lg transition duration-300 mt-4 flex-grow">
-                            Export to Excel
+                        <button class="category-btn px-5 py-2 rounded-full border border-rose-300 text-rose-700 font-medium transition hover:bg-rose-100" data-category="portraits">
+                            <i class="fas fa-church mr-2"></i>ሽምግልና
+                        </button>
+                        <button class="category-btn px-5 py-2 rounded-full border border-rose-300 text-rose-700 font-medium transition hover:bg-rose-100" data-category="teklil">
+                            <i class="fas fa-champagne-glasses mr-2"></i>ስርአተ ተክሊል
+                        </button>
+                        <button class="category-btn px-5 py-2 rounded-full border border-rose-300 text-rose-700 font-medium transition hover:bg-rose-100" data-category="family">
+                            <i class="fas fa-heart mr-2"></i>መልስ
+                        </button>
+                        <button class="category-btn px-5 py-2 rounded-full border border-rose-300 text-rose-700 font-medium transition hover:bg-rose-100" data-category="ceremony">
+                            <i class="fas fa-users mr-2"></i>የመስክ ፎቶ
+                        </button>
+                      <button class="category-btn px-5 py-2 rounded-full border border-rose-300 text-rose-700 font-medium transition hover:bg-rose-100" data-category="reception">
+                            <i class="fas fa-users mr-2"></i>Studio photo
                         </button>
                     </div>
                 </div>
+            </section>
+        </div>
+
+        <!-- Hero Section - Padding handled dynamically by JS below the fixed navbar -->
+        <section id="heroSection" class="pb-12 px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="script-font text-4xl md:text-6xl text-rose-700 mb-4">Our Wedding Gallery</h2>
+                <p class="serif-font text-lg md:text-xl text-amber-700 mb-2">Forever & Always</p>
+                <p class="text-gray-600 max-w-2xl mx-auto"></p>
             </div>
+        </section>
+
+        <!-- Photo Count -->
+        <div class="max-w-7xl mx-auto px-4 mb-6">
+            <p id="photoCount" class="text-gray-500 text-sm"></p>
+        </div>
+
+        <!-- Photo Gallery (Masonry) -->
+        <section class="px-4 pb-16">
+            <div id="photoGallery" class="max-w-7xl mx-auto gallery-masonry">
+                <!-- Photos will be inserted here by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-white/80 backdrop-blur-sm py-8 text-center border-t border-rose-100">
+            <div class="flex items-center justify-center gap-3 mb-4">
+                <div class="w-12 h-px bg-rose-300"></div>
+                <i class="fas fa-heart text-rose-400"></i>
+                <div class="w-12 h-px bg-rose-300"></div>
+            </div>
+            <p class="script-font text-3xl text-rose-700 mb-2">ዮኒ & ሜሊ</p>
+            <p class="text-amber-600 serif-font"></p>
+            <p class="text-gray-400 text-sm mt-4">© 2017 Wedding Gallery</p>
+        </footer>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightboxModal" class="hidden fixed inset-0 bg-black/95 z-50 flex items-center justify-center">
+        <button id="closeLightbox" class="absolute top-4 right-4 z-10 p-3 text-white/70 hover:text-white transition">
+            <i class="fas fa-times text-2xl"></i>
+        </button>
+        <button id="prevPhoto" class="absolute left-4 top-1/2 -translate-y-1/2 p-4 text-white/70 hover:text-white transition">
+            <i class="fas fa-chevron-left text-3xl"></i>
+        </button>
+        <button id="nextPhoto" class="absolute right-4 top-1/2 -translate-y-1/2 p-4 text-white/70 hover:text-white transition">
+            <i class="fas fa-chevron-right text-3xl"></i>
+        </button>
+        <div class="max-w-6xl w-full px-4">
+            <div class="relative">
+                <img id="lightboxImage" src="" alt="" class="max-h-[80vh] mx-auto rounded-lg shadow-2xl">
+            </div>
+            <div class="text-center mt-6">
+                <h3 id="lightboxTitle" class="text-xl font-medium text-white"></h3>
+                <p id="lightboxCategory" class="text-rose-300 mt-1 capitalize"></p>
+                <div class="flex justify-center gap-4 mt-4">
+                    <!-- Like button was removed here -->
+                    <button id="downloadBtn" class="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full text-white hover:bg-white/20 transition">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <button id="shareBtn" class="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full text-white hover:bg-white/20 transition">
+                        <i class="fas fa-share"></i> Share
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-4 left-1/2 -translate-x-1/2">
+            <p id="photoIndex" class="text-white/50 text-sm"></p>
         </div>
     </div>
 
-    <!-- Confirmation Modal for Reset -->
-    <div id="resetModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white p-6 rounded-xl shadow-xl max-w-md w-full mx-4">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">Confirm Reset</h3>
-            <p class="text-gray-600 mb-6">Are you sure you want to reset all attendance data? This action cannot be undone.</p>
-            <div class="flex justify-end gap-4">
-                <button id="cancelResetBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition duration-300">
-                    Cancel
-                </button>
-                <button id="confirmResetBtn" class="reset-btn text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-                    Reset All Data
-                </button>
-            </div>
+    <!-- Slideshow Modal -->
+    <div id="slideshowModal" class="hidden fixed inset-0 bg-black z-50 flex items-center justify-center">
+        <button id="closeSlideshow" class="absolute top-4 right-4 z-10 p-3 text-white/70 hover:text-white transition">
+            <i class="fas fa-times text-2xl"></i>
+        </button>
+        <div class="w-full h-full flex items-center justify-center p-8">
+            <img id="slideshowImage" src="" alt="" class="max-h-full max-w-full object-contain rounded-lg">
+        </div>
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4">
+            <button id="slideshowPrev" class="p-3 bg-white/10 rounded-full text-white hover:bg-white/20 transition">
+                <i class="fas fa-backward"></i>
+            </button>
+            <button id="slideshowPlayPause" class="p-4 bg-white/20 rounded-full text-white hover:bg-white/30 transition">
+                <i class="fas fa-pause" id="playPauseIcon"></i>
+            </button>
+            <button id="slideshowNext" class="p-3 bg-white/10 rounded-full text-white hover:bg-white/20 transition">
+                <i class="fas fa-forward"></i>
+            </button>
         </div>
     </div>
 
-    <!-- Confirmation Modal for Date Deletion -->
-    <div id="deleteDateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white p-6 rounded-xl shadow-xl max-w-md w-full mx-4">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">Confirm Deletion</h3>
-            <p id="deleteDateMessage" class="text-gray-600 mb-6">Are you sure you want to delete attendance data for this date?</p>
-            <div class="flex justify-end gap-4">
-                <button id="cancelDeleteBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition duration-300">
-                    Cancel
-                </button>
-                <button id="confirmDeleteBtn" class="delete-btn text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-                    Delete
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Student Modal -->
-    <div id="editStudentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white p-6 rounded-xl shadow-xl max-w-md w-full mx-4">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">Edit Student</h3>
-            <div class="mb-4">
-                <label for="editStudentName" class="block text-sm font-medium text-gray-700 mb-1">Student Name</label>
-                <input type="text" id="editStudentName" class="w-full p-3 rounded-lg border-2 border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-indigo-500">
-            </div>
-            <div class="mb-4">
-                <label for="editStudentGender" class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
-                <select id="editStudentGender" class="w-full p-3 rounded-lg border-2 border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-indigo-500">
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                </select>
-            </div>
-            <div class="flex justify-end gap-4">
-                <button id="cancelEditBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition duration-300">
-                    Cancel
-                </button>
-                <button id="saveEditBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-                    Save Changes
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Permission Modal -->
-    <div id="permissionModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white p-6 rounded-xl shadow-xl max-w-md w-full mx-4">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">Add Permission</h3>
-            <div class="mb-4">
-                <label for="modalPermissionDate" class="block text-sm font-medium text-gray-700 mb-1">Permission Date</label>
-                <input type="date" id="modalPermissionDate" class="w-full p-3 rounded-lg border-2 border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-indigo-500">
-            </div>
-            <div class="mb-4">
-                <label for="permissionReason" class="block text-sm font-medium text-gray-700 mb-1">Reason (Optional)</label>
-                <textarea id="permissionReason" rows="3" class="w-full p-3 rounded-lg border-2 border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-indigo-500" placeholder="Enter reason for permission"></textarea>
-            </div>
-            <div id="permissionLimitWarning" class="text-red-600 text-sm mb-4 hidden">
-                Warning: This student already has 3 permissions this month!
-            </div>
-            <div class="flex justify-end gap-4">
-                <button id="cancelPermissionBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition duration-300">
-                    Cancel
-                </button>
-                <button id="savePermissionBtn" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-                    Save Permission
-                </button>
-            </div>
-        </div>
-    </div>
+    <!-- Audio Element for Background Music -->
+    <audio id="backgroundMusic" loop>
+        <!-- Using a royalty-free romantic piano music from a free source -->
+        <source src="3.mp3" type="audio/mpeg">
+        <source src="https://assets.mixkit.co/music/preview/mixkit-piano-romance-1104.wav" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
 
     <script>
-        // Error handling
-        window.addEventListener('error', function(e) {
-            console.error('Global error caught:', e.error);
-            document.getElementById('dailyAttendanceContainer').innerHTML = 
-                `<div class="error-message">
-                    <p>An error occurred: ${e.message}</p>
-                    <p>Please refresh the page and try again.</p>
-                </div>`;
-        });
+        // Wedding photos data
+        let photos = [
+            { id: 1, url: '1.jpg', caption: 'First Look', category: 'ceremony', likes: 124, height: 'tall' },
+            { id: 2, url: '2.jpg', caption: 'Walking Down the Aisle', category: 'ceremony', likes: 89, height: 'normal' },
+            { id: 3, url: '3.jpg', caption: 'The Kiss', category: 'ceremony', likes: 156, height: 'tall' },
+            { id: 4, url: '4.jpg', caption: 'Wedding Rings', category: 'ceremony', likes: 67, height: 'normal' },
+            { id: 5, url: '5.jpg', caption: 'Bride & Groom Portrait', category: 'ceremony', likes: 203, height: 'tall' },
+            { id: 6, url: '6.jpg', caption: 'Beautiful Bouquet', category: 'ceremony', likes: 78, height: 'normal' },
+            { id: 7, url: '7.jpg', caption: 'First Dance', category: 'ceremony', likes: 145, height: 'normal' },
+            { id: 8, url: '8.jpg', caption: 'Cutting the Cake', category: 'ceremony', likes: 92, height: 'tall' },
+            { id: 9, url: '9.jpg', caption: 'Family Photo', category: 'ceremony', likes: 118, height: 'normal' },
+            { id: 10, url: '10.jpg', caption: 'Romantic Sunset', category: 'ceremony', likes: 187, height: 'tall' },
+            { id: 11, url: '11.jpg', caption: 'Table Decorations', category: 'ceremony', likes: 54, height: 'normal' },
+            { id: 12, url: '12.jpg', caption: 'Bridesmaids', category: 'ceremony', likes: 134, height: 'normal' },
+            { id: 13, url: '13.jpg', caption: 'Exchange of Vows', category: 'ceremony', likes: 167, height: 'tall' },
+            { id: 14, url: '14.jpg', caption: 'Party Time!', category: 'ceremony', likes: 98, height: 'normal' },
+             { id: 15, url: '15.jpg', caption: 'First Look', category: 'reception', likes: 124, height: 'tall' },
+            { id: 16, url: '16.jpg', caption: 'Walking Down the Aisle', category: 'reception', likes: 89, height: 'normal' },
+            { id: 17, url: '17.jpg', caption: 'The Kiss', category: 'reception', likes: 156, height: 'tall' },
+            { id: 18, url: '18.jpg', caption: 'Wedding Rings', category: 'reception', likes: 67, height: 'normal' },
+            { id: 19, url: '19.jpg', caption: 'Bride & Groom Portrait', category: 'reception', likes: 203, height: 'tall' },
+            { id: 20, url: '20.jpg', caption: 'Beautiful Bouquet', category: 'reception', likes: 78, height: 'normal' },
+            { id: 21, url: '21.jpg', caption: 'First Dance', category: 'reception', likes: 145, height: 'normal' },
+            { id: 22, url: '22.jpg', caption: 'Cutting the Cake', category: 'reception', likes: 92, height: 'tall' },
+            { id: 23, url: '23.jpg', caption: 'Family Photo', category: 'reception', likes: 118, height: 'normal' },
+            { id: 24, url: '24.jpg', caption: 'Romantic Sunset', category: 'reception', likes: 187, height: 'tall' },
+            { id: 25, url: '25.jpg', caption: 'Table Decorations', category: 'reception', likes: 54, height: 'normal' },
+            { id: 26, url: '26.jpg', caption: 'Bridesmaids', category: 'reception', likes: 134, height: 'normal' },
+            { id: 27, url: '27.jpg', caption: 'Exchange of Vows', category: 'reception', likes: 167, height: 'tall' },
+            { id: 28, url: '28.jpg', caption: 'First Look', category: 'portraits', likes: 124, height: 'tall' },
+            { id: 29, url: '29.jpg', caption: 'Walking Down the Aisle', category: 'portraits', likes: 89, height: 'normal' },
+            { id: 30, url: '30.jpg', caption: 'The Kiss', category: 'portraits', likes: 156, height: 'tall' },
+            { id: 32, url: '31.jpg', caption: 'Wedding Rings', category: 'portraits', likes: 67, height: 'normal' },
+            { id: 33, url: '32.jpg', caption: 'Bride & Groom Portrait', category: 'portraits', likes: 203, height: 'tall' },
+            { id: 34, url: '33.jpg', caption: 'Beautiful Bouquet', category: 'portraits', likes: 78, height: 'normal' },
+            { id: 35, url: '34.jpg', caption: 'First Dance', category: 'portraits', likes: 145, height: 'normal' },
+            { id: 36, url: '35.jpg', caption: 'Cutting the Cake', category: 'portraits', likes: 92, height: 'tall' },
+            { id: 37, url: '36.jpg', caption: 'Family Photo', category: 'portraits', likes: 118, height: 'normal' },
+            { id: 38, url: '37.jpg', caption: 'Romantic Sunset', category: 'portraits', likes: 187, height: 'tall' },
+            { id: 39, url: '38.jpg', caption: 'Table Decorations', category: 'portraits', likes: 54, height: 'normal' },
+            { id: 40, url: '39.jpg', caption: 'Bridesmaids', category: 'portraits', likes: 134, height: 'normal' },
+            { id: 41, url: '40.jpg', caption: 'Exchange of Vows', category: 'teklil', likes: 167, height: 'tall' },
+            { id: 42, url: '41.jpg', caption: 'Party Time!', category: 'teklil', likes: 98, height: 'normal' },
+             { id: 43, url: '42.jpg', caption: 'First Look', category: 'teklil', likes: 124, height: 'tall' },
+            { id: 44, url: '43.jpg', caption: 'Walking Down the Aisle', category: 'teklil', likes: 89, height: 'normal' },
+            { id: 45, url: '44.jpg', caption: 'The Kiss', category: 'teklil', likes: 156, height: 'tall' },
+            { id: 46, url: '45.jpg', caption: 'Wedding Rings', category: 'teklil', likes: 67, height: 'normal' },
+            { id: 47, url: '46.jpg', caption: 'Bride & Groom Portrait', category: 'teklil', likes: 203, height: 'tall' },
+            { id: 49, url: '47.jpg', caption: 'Beautiful Bouquet', category: 'teklil', likes: 78, height: 'normal' },
+            { id: 50, url: '48.jpg', caption: 'First Dance', category: 'teklil', likes: 145, height: 'normal' },
+            { id: 51, url: '49.jpg', caption: 'Cutting the Cake', category: 'reception', likes: 92, height: 'tall' },
+            { id: 52, url: '50.jpg', caption: 'Family Photo', category: 'family', likes: 118, height: 'normal' },
+            { id: 53, url: '51.jpg', caption: 'Romantic Sunset', category: 'family', likes: 187, height: 'tall' },
+            { id: 54, url: '52.jpg', caption: 'Table Decorations', category: 'family', likes: 54, height: 'normal' },
+            { id: 55, url: '53.jpg', caption: 'Bridesmaids', category: 'family', likes: 134, height: 'normal' },
+            { id: 56, url: '54.jpg', caption: 'Exchange of Vows', category: 'family', likes: 167, height: 'tall' },
+            { id: 57, url: '55.jpg', caption: 'Cutting the Cake', category: 'family', likes: 92, height: 'tall' },
+            { id: 58, url: '56.jpg', caption: 'Family Photo', category: 'family', likes: 118, height: 'normal' },
+            { id: 59, url: '57.jpg', caption: 'Romantic Sunset', category: 'family', likes: 187, height: 'tall' },
+            { id: 60, url: '58.jpg', caption: 'Table Decorations', category: 'family', likes: 54, height: 'normal' },
+            { id: 61, url: '59.jpg', caption: 'Bridesmaids', category: 'family', likes: 134, height: 'normal' },
+            { id: 62, url: '60.jpg', caption: 'Exchange of Vows', category: 'family', likes: 167, height: 'tall' },
+             { id: 63, url: '61.jpg', caption: 'Table Decorations', category: 'family', likes: 54, height: 'normal' },
+            { id: 64, url: '62.jpg', caption: 'Bridesmaids', category: 'family', likes: 134, height: 'normal' },
+            { id: 65, url: '53.jpg', caption: 'Exchange of Vows', category: 'family', likes: 167, height: 'tall' },
+           
+        ];
 
-        // Check if required libraries are loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded successfully');
-            
-            if (typeof window.jspdf === 'undefined') {
-                console.warn('jspdf not loaded - PDF export will be disabled');
-                document.getElementById('saveSummaryPdfBtn').disabled = true;
-                document.getElementById('saveSummaryPdfBtn').innerText = 'PDF Export (Library Missing)';
-            }
-            
-            if (typeof XLSX === 'undefined') {
-                console.warn('XLSX not loaded - Excel export will be disabled');
-                document.getElementById('saveHistoryExcelBtn').disabled = true;
-                document.getElementById('saveExcelBtn').disabled = true;
-                document.getElementById('saveHistoryExcelBtn').innerText = 'Excel Export (Library Missing)';
-            }
-        });
-
-        // Initialize data structure with permissions and sessions
-        const initializeData = () => {
-            try {
-                if (!localStorage.getItem('attendanceData')) {
-                    const defaultData = {
-                        masterStudents: [
-    
-    {"name": "ኑሀሚን አንድነት", "gender": "female"},
-    {"name": "ሳሮን ዳንኤል", "gender": "female"},
-    {"name": "አቤኔዘር ይርጋለም", "gender": "male"},
-    {"name": "ሜሮን ግርማ", "gender": "female"},
-    {"name": "ናፍያድ ቀነኒሳ", "gender": "male"},
-    {"name": "ፅናት ወልዱ", "gender": "female"},
-    {"name": "ቅድስት ታደሰ", "gender": "female"},
-    {"name": "ምህረት ጋሻው", "gender": "female"},
-    {"name": "ዮርዳኖስ ታጠቅ", "gender": "female"},
-    {"name": "ናታኒም ምትኩ", "gender": "male"},
-    {"name": "አቤኔዘር ጥላሁን", "gender": "male"},
-    {"name": "ኑሀሚን ታልጌታ", "gender": "female"},
-    {"name": "አማኑኤል ቀነኒሳ", "gender": "male"},
-    {"name": "ናታን ስዮም", "gender": "male"},
-    {"name": "ተመስገን ተ/ብርሀን", "gender": "male"},
-    {"name": "ፋኑኤል እንዳልካቸው", "gender": "male"},
-    {"name": "ማራናታ ዝናዬ", "gender": "female"},
-    {"name": "ማራማዊት ዮናስ", "gender": "female"},
-    {"name": "እድላዊት ደስታ", "gender": "female"},
-    {"name": "ኤልዳና አበበ", "gender": "male"},
-    {"name": "ሜሮን ስዮም", "gender": "female"},
-    {"name": "ካሌብ ሐኮንን", "gender": "male"},
-    {"name": "ዳዊት እንዳየ", "gender": "male"},
-    {"name": "በፀሎት ዘመተ", "gender": "female"},
-    {"name": "የአብ ዘር ይድነቃቸው", "gender": "female"},
-    {"name": "አቢሲኒያ ፍቃዱ", "gender": "female"},
-    {"name": "ሶሊያና ሀይሉ", "gender": "female"},
-    {"name": "ህይወት ታሪኩ", "gender": "female"},
-    {"name": "በእምነት ከፍያለው", "gender": "female"},
-    {"name": "ፍቅር አዲስ", "gender": "male"},
-    {"name": "አብርሀም ወንድሜ", "gender": "male"},
-    {"name": "መክሊት አራጌ", "gender": "female"},
-    {"name": "ምኞት ታደለ", "gender": "female"},
-    {"name": "ብሌን ካሳሁን", "gender": "female"},
-    {"name": "ኬና ቶሌሳ", "gender": "male"},
-    {"name": "ያብስራ ካሳሁን", "gender": "female"},
-    {"name": "ናትናኤል ሽመልስ", "gender": "male"},
-    {"name": "ሄኖክ ጉልማ", "gender": "male"},
-    {"name": "ቃልአብ ቁምላቸው", "gender": "male"},
-    {"name": "ኤዶምያስ ዘረፈ", "gender": "male"},
-    {"name": "ሱራፊል ምንዳ", "gender": "male"},
-    {"name": "አሸናፊ ፍቅሪ", "gender": "male"},
-    {"name": "በእምነት አንበሳ", "gender": "male"},
-    {"name": "በሱፍቃድ ዘሪሁን", "gender": "male"},
-    {"name": "ኪሩቤል ነጋ", "gender": "male"},
-    {"name": "በፀሎት ዘመት", "gender": "female"},
-    {"name": "መልክኤል እዮብ", "gender": "male"},
-    {"name": "ፍሌበር ደረጀ", "gender": "male"},
-    {"name": "ህይወት ታሪኩ", "gender": "female"},
-    {"name": "ፍቅር አዲስ", "gender": "male"},
-    {"name": "ህይወት ተመስገን", "gender": "female"},
-    {"name": "ባምላክ አለሜነህ", "gender": "male"},
-    {"name": "ቅድስት አሸናፊ", "gender": "female"},
-    {"name": "ሰላም አሸናፊ", "gender": "female"},
-    {"name": "ቅድስት መላኩ", "gender": "female"},
-    {"name": "ሜላት መንክር", "gender": "female"},
-    {"name": "ኤልዳና አበበ", "gender": "male"},
-    {"name": "ናታኒም ጌታሁን", "gender": "male"},
-    {"name": "ኤልያና ኤርምያስ", "gender": "female"},
-    {"name": "አኪያ ባርክልኝ", "gender": "female"},
-    {"name": "ይስሀቅ አብርሀም", "gender": "male"},
-    {"name": "እዮኤል ደረጀ", "gender": "male"},
-    {"name": "ሱራፊል ገ/ማርያም", "gender": "female"},
-    {"name": "አዶናይ ደረጀ", "gender": "male"},
-    {"name": "ማእዶት ተገኘ", "gender": "female"},
-    {"name": "አቤል ነጋ", "gender": "male"}
-  
-
-  
-                        ],
-                        attendanceRecords: {},
-                        finalizedRecords: {},
-                        permissions: {}, // Structure: {studentName: [{date: "YYYY-MM-DD", reason: "...", monthYear: "YYYY-MM"}]}
-                        sessions: {}, // Structure: {date: {sessionName: {studentName: status}}}
-                        users: [
-                            {username: "admin", password: "0730", role: "admin"},
-                            {username: "user", password: "1234", role: "user"}
-                        ]
-                    };
-                    localStorage.setItem('attendanceData', JSON.stringify(defaultData));
-                    return defaultData;
-                }
-                
-                const data = JSON.parse(localStorage.getItem('attendanceData'));
-                
-                // Ensure all required properties exist
-                if (!data.masterStudents) data.masterStudents = [];
-                if (!data.attendanceRecords) data.attendanceRecords = {};
-                if (!data.finalizedRecords) data.finalizedRecords = {};
-                if (!data.permissions) data.permissions = {};
-                if (!data.sessions) data.sessions = {};
-                if (!data.users) data.users = [
-                    {username: "admin", password: "0730", role: "admin"},
-                    {username: "user", password: "1234", role: "user"}
-                ];
-                
-                return data;
-                
-            } catch (error) {
-                console.error('Error loading data:', error);
-                // Return minimal default data
-                return {
-                    masterStudents: [],
-                    attendanceRecords: {},
-                    finalizedRecords: {},
-                    permissions: {},
-                    sessions: {},
-                    users: [
-                        {username: "admin", password: "0730", role: "admin"},
-                        {username: "user", password: "1234", role: "user"}
-                    ]
-                };
-            }
-        };
-
-        let appData = initializeData();
-        let currentDate = new Date().toISOString().split('T')[0];
-        let currentSession = 'morning'; // Default session
-        let currentPermissionStudent = null;
-        let dateToDelete = null;
-        let currentHistoryDate = null;
-        let dateRange = {
-            start: null,
-            end: null
-        };
-        let currentGenderFilter = 'all';
-        let currentEditStudent = null;
+        let currentCategory = 'all';
+        let currentPhotoIndex = 0;
+        let filteredPhotos = [...photos];
+        let slideshowInterval = null;
+        let isPlaying = true;
+        
+        // New Global Variables for scroll logic
+        let lastScrollTop = 0;
+        const scrollThreshold = 300; // Pixels scrolled down before hiding
 
         // DOM Elements
-        const dailyAttendanceSection = document.getElementById('dailyAttendanceSection');
-        const adminSection = document.getElementById('adminSection');
-        const adminPasswordSection = document.getElementById('adminPasswordSection');
-        const showDailyBtn = document.getElementById('showDailyBtn');
-        const showAdminBtn = document.getElementById('showAdminBtn');
-        const adminPasswordInput = document.getElementById('adminPasswordInput');
-        const submitPasswordBtn = document.getElementById('submitPasswordBtn');
-        const passwordMessage = document.getElementById('passwordMessage');
-        const adminAlertBadge = document.getElementById('adminAlertBadge');
-
-        const dailyAttendanceContainer = document.getElementById('dailyAttendanceContainer');
-        const datePicker = document.getElementById('date-picker');
-        const studentSearchInput = document.getElementById('studentSearch');
-        const summarySearchInput = document.getElementById('summarySearch');
-        const addStudentBtn = document.getElementById('addStudentBtn');
-        const newStudentNameInput = document.getElementById('newStudentName');
-        const newStudentGenderSelect = document.getElementById('newStudentGender');
-        const masterStudentListDiv = document.getElementById('masterStudentList');
-        const attendanceSummaryDiv = document.getElementById('attendanceSummary');
-        const finalizeButton = document.getElementById('finalizeButton');
-        const exportMessageDiv = document.getElementById('exportMessage');
-
-        // Gender filter buttons
-        const allGenderBtn = document.getElementById('allGenderBtn');
-        const maleGenderBtn = document.getElementById('maleGenderBtn');
-        const femaleGenderBtn = document.getElementById('femaleGenderBtn');
-
-        // New elements for absence alerts
-        const absenceAlertsContainer = document.getElementById('absenceAlertsContainer');
-        const absenceAlertsList = document.getElementById('absenceAlertsList');
-
-        // New elements for date range
-        const startDateInput = document.getElementById('startDate');
-        const endDateInput = document.getElementById('endDate');
-        const applyDateRangeBtn = document.getElementById('applyDateRange');
-
-        // New elements for summary/history toggle
-        const summaryView = document.getElementById('summaryView');
-        const detailedHistoryView = document.getElementById('detailedHistoryView');
-        const showSummaryViewBtn = document.getElementById('showSummaryView');
-        const showHistoryViewBtn = document.getElementById('showHistoryView');
-        const completeHistoryTable = document.getElementById('completeHistoryTable');
-
-        // New elements for date history
-        const dateHistoryListDiv = document.getElementById('dateHistoryList');
-        const dateDetailView = document.getElementById('dateDetailView');
-        const historyDateTitle = document.getElementById('historyDateTitle');
-        const historyDetailContainer = document.getElementById('historyDetailContainer');
-        const closeDateViewBtn = document.getElementById('closeDateViewBtn');
-        const saveExcelBtn = document.getElementById('saveExcelBtn');
-
-        // New elements for summary actions
-        const saveSummaryPdfBtn = document.getElementById('saveSummaryPdfBtn');
-        const saveHistoryExcelBtn = document.getElementById('saveHistoryExcelBtn');
-        const resetSummaryBtn = document.getElementById('resetSummaryBtn');
-        const resetModal = document.getElementById('resetModal');
-        const cancelResetBtn = document.getElementById('cancelResetBtn');
-        const confirmResetBtn = document.getElementById('confirmResetBtn');
-
-        // Elements for date deletion
-        const deleteDateModal = document.getElementById('deleteDateModal');
-        const deleteDateMessage = document.getElementById('deleteDateMessage');
-        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-
-        // Elements for student editing
-        const editStudentModal = document.getElementById('editStudentModal');
-        const editStudentNameInput = document.getElementById('editStudentName');
-        const editStudentGenderSelect = document.getElementById('editStudentGender');
-        const cancelEditBtn = document.getElementById('cancelEditBtn');
-        const saveEditBtn = document.getElementById('saveEditBtn');
-
-        // Permission elements
-        const permissionInfoDiv = document.getElementById('permissionInfo');
-        const permissionModal = document.getElementById('permissionModal');
-        const modalPermissionDateInput = document.getElementById('modalPermissionDate');
-        const permissionReasonInput = document.getElementById('permissionReason');
-        const permissionLimitWarningDiv = document.getElementById('permissionLimitWarning');
-        const cancelPermissionBtn = document.getElementById('cancelPermissionBtn');
-        const savePermissionBtn = document.getElementById('savePermissionBtn');
-        const sessionMorningBtn = document.getElementById('sessionMorning');
-        const sessionAfternoonBtn = document.getElementById('sessionAfternoon');
-        const sessionEveningBtn = document.getElementById('sessionEvening');
-        const sessionIndicator = document.getElementById('sessionIndicator');
-        const permissionStudentSelect = document.getElementById('permissionStudentSelect');
-        const permissionDateInput = document.getElementById('permissionDate');
-        const addPermissionBtn = document.getElementById('addPermissionBtn');
-        const permissionListDiv = document.getElementById('permissionList');
-
-        // Set initial dates
-        datePicker.value = currentDate;
-        permissionDateInput.value = currentDate;
-        modalPermissionDateInput.value = currentDate;
+        const landingPage = document.getElementById('landingPage');
+        const mainGallery = document.getElementById('mainGallery');
+        const photoGallery = document.getElementById('photoGallery');
+        const lightboxModal = document.getElementById('lightboxModal');
+        const slideshowModal = document.getElementById('slideshowModal');
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
+        const smartNavWrapper = document.getElementById('smartNavWrapper');
+        const heroSection = document.getElementById('heroSection');
+        const categoryNav = document.getElementById('categoryNav');
         
-        // Set default date range (last 3 months)
-        const threeMonthsAgo = new Date();
-        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-        startDateInput.value = threeMonthsAgo.toISOString().split('T')[0];
-        endDateInput.value = currentDate;
-        dateRange.start = startDateInput.value;
-        dateRange.end = endDateInput.value;
+        // Music Elements
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        const musicPlayer = document.getElementById('musicPlayer');
+        const musicToggle = document.getElementById('musicToggle');
+        const musicIcon = document.getElementById('musicIcon');
+        const landingMusicToggle = document.getElementById('landingMusicToggle');
+        const landingMusicIcon = document.getElementById('landingMusicIcon');
+        const landingMusicText = document.getElementById('landingMusicText');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const musicClose = document.getElementById('musicClose');
 
-        // Initialize the application
-        function initializeApp() {
-            try {
-                console.log('Initializing app with', appData.masterStudents.length, 'students');
-                
-                renderMasterStudents();
-                setupDailyAttendanceListener();
-                renderSummary();
-                renderDateHistoryList();
-                checkAbsenceAlerts();
-                updateAdminAlertBadge();
-                updatePermissionList();
-                setSession('morning');
-                
-                console.log('App initialized successfully');
-            } catch (error) {
-                console.error('Error in initializeApp:', error);
-                dailyAttendanceContainer.innerHTML = 
-                    `<div class="error-message">
-                        <p>Error loading application: ${error.message}</p>
-                        <p>Please refresh the page or clear browser data if the problem persists.</p>
-                    </div>`;
+        // Set initial volume
+        backgroundMusic.volume = 0.5; // 50% volume
+
+        // --- Music Player Functions ---
+        function toggleMusic() {
+            if (backgroundMusic.paused) {
+                backgroundMusic.play();
+                musicIcon.className = 'fas fa-pause';
+                landingMusicIcon.className = 'fas fa-pause music-icon';
+                landingMusicText.textContent = 'Pause Music';
+            } else {
+                backgroundMusic.pause();
+                musicIcon.className = 'fas fa-play';
+                landingMusicIcon.className = 'fas fa-play music-icon';
+                landingMusicText.textContent = 'Play Music';
             }
         }
 
-        function setupDailyAttendanceListener() {
-            try {
-                const selectedDate = datePicker.value;
-                renderDailyStudents(selectedDate);
-            } catch (error) {
-                console.error('Error in setupDailyAttendanceListener:', error);
-            }
+        function updateVolume() {
+            backgroundMusic.volume = volumeSlider.value / 100;
         }
 
-        // Render functions
-        function renderDailyStudents(date, searchTerm = '') {
-            try {
-                dailyAttendanceContainer.innerHTML = '';
-                
-                if (appData.masterStudents.length === 0) {
-                    dailyAttendanceContainer.innerHTML = `
-                        <div class="text-center text-gray-500 p-8 border-2 border-dashed border-gray-300 rounded-xl">
-                            <p>No students in the master list. Please add students in the Admin Panel.</p>
-                        </div>`;
-                    return;
-                }
-                
-                // Initialize session data for this date
-                if (!appData.sessions[date]) {
-                    appData.sessions[date] = {};
-                }
-                if (!appData.sessions[date][currentSession]) {
-                    appData.sessions[date][currentSession] = {};
-                }
-                
-                // Filter students based on search term and gender
-                const filteredStudents = appData.masterStudents.filter(student => {
-                    if (currentGenderFilter !== 'all' && student.gender !== currentGenderFilter) {
-                        return false;
-                    }
-                    if (searchTerm && !student.name.toLowerCase().includes(searchTerm.toLowerCase())) {
-                        return false;
-                    }
-                    return true;
-                });
-                
-                if (filteredStudents.length === 0) {
-                    dailyAttendanceContainer.innerHTML = `
-                        <div class="text-center text-gray-500 p-8 border-2 border-dashed border-gray-300 rounded-xl">
-                            <p>No students match your search.</p>
-                        </div>`;
-                    return;
-                }
-                
-                // Check if today has any permissions
-                const todayPermissions = filteredStudents.filter(student => 
-                    hasPermissionOnDate(student.name, date)
-                );
-                
-                if (todayPermissions.length > 0) {
-                    permissionInfoDiv.classList.remove('hidden');
-                    permissionInfoDiv.innerHTML = `
-                        <strong>Note:</strong> ${todayPermissions.length} student(s) have permission today:
-                        ${todayPermissions.map(s => s.name).join(', ')}. They are automatically marked as Present.
-                    `;
-                } else {
-                    permissionInfoDiv.classList.add('hidden');
-                }
-                
-                filteredStudents.forEach(student => {
-                    // Check if student has permission for this date
-                    const hasPermission = hasPermissionOnDate(student.name, date);
-                    
-                    // If student has permission, they are automatically Present
-                    let status = hasPermission ? 'Present' : 
-                        (appData.sessions[date][currentSession][student.name] || 'Absent');
-                    
-                    // Highlight search term in student name
-                    let displayName = student.name;
-                    if (searchTerm) {
-                        const regex = new RegExp(`(${searchTerm})`, 'gi');
-                        displayName = student.name.replace(regex, '<span class="search-highlight">$1</span>');
-                    }
-                    
-                    const genderTag = student.gender === 'male' ? 
-                        '<span class="gender-tag male-tag">Male</span>' : 
-                        '<span class="gender-tag female-tag">Female</span>';
-                    
-                    // Permission badge if student has permission today
-                    const permissionBadge = hasPermission ? 
-                        '<span class="permission-badge">Permission</span>' : '';
-                    
-                    // Check permission count for this month
-                    const monthlyPermissions = getMonthlyPermissionCount(student.name, date);
-                    const permissionCountText = monthlyPermissions >= 3 ? 
-                        `<span class="permission-warning">(${monthlyPermissions}/3 this month)</span>` : 
-                        `(${monthlyPermissions}/3 this month)`;
-                    
-                    const studentDiv = document.createElement('div');
-                    studentDiv.className = 'student-card flex flex-col sm:flex-row items-center justify-between bg-white p-4 rounded-xl shadow-sm transition duration-300 hover:shadow-md fade-in';
-                    studentDiv.innerHTML = `
-                        <div class="w-full sm:w-1/2 mb-2 sm:mb-0">
-                            <div class="flex flex-col">
-                                <span class="text-lg font-medium truncate text-gray-900">${displayName} ${genderTag} ${permissionBadge}</span>
-                                <span class="text-xs text-gray-500 mt-1">${permissionCountText}</span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col sm:flex-row gap-2">
-                            ${!hasPermission ? `
-                                <button data-student-name="${student.name}" data-status="Present" class="status-btn px-4 py-2 rounded-full font-semibold text-sm transition duration-300 ${status === 'Present' ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-green-200'}">✔️ Present</button>
-                                <button data-student-name="${student.name}" data-status="Absent" class="status-btn px-4 py-2 rounded-full font-semibold text-sm transition duration-300 ${status === 'Absent' ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-red-200'}">✖️ Absent</button>
-                                <button data-student-name="${student.name}" class="give-permission-btn permission-btn px-4 py-2 rounded-full font-semibold text-sm transition duration-300 hover:bg-yellow-500">📝 Permission</button>
-                            ` : `
-                                <button disabled class="px-4 py-2 rounded-full font-semibold text-sm bg-green-500 text-white">✔️ Present (Permission)</button>
-                                <button data-student-name="${student.name}" class="remove-permission-btn bg-red-500 text-white px-4 py-2 rounded-full font-semibold text-sm">Remove Permission</button>
-                            `}
-                        </div>
-                    `;
-                    dailyAttendanceContainer.appendChild(studentDiv);
-                });
-                
-                localStorage.setItem('attendanceData', JSON.stringify(appData));
-            } catch (error) {
-                console.error('Error in renderDailyStudents:', error);
-                dailyAttendanceContainer.innerHTML = 
-                    `<div class="error-message">
-                        <p>Error displaying students: ${error.message}</p>
-                    </div>`;
-            }
+        function showMusicPlayer() {
+            musicPlayer.classList.remove('hidden');
+            musicPlayer.classList.add('visible');
         }
 
-        function renderMasterStudents() {
-            try {
-                masterStudentListDiv.innerHTML = '';
-                
-                if (appData.masterStudents.length === 0) {
-                    masterStudentListDiv.innerHTML = `<p class="text-sm text-gray-600">No students in master list. Add students above.</p>`;
-                    return;
-                }
-                
-                appData.masterStudents.forEach(student => {
-                    const genderTag = student.gender === 'male' ? 
-                        '<span class="gender-tag male-tag">Male</span>' : 
-                        '<span class="gender-tag female-tag">Female</span>';
-                    
-                    const studentDiv = document.createElement('div');
-                    studentDiv.className = 'flex items-center justify-between p-2 bg-gray-50 rounded-lg fade-in';
-                    studentDiv.innerHTML = `
-                        <div>
-                            <span class="truncate text-gray-900">${student.name}</span>
-                            ${genderTag}
-                        </div>
-                        <div class="flex gap-2">
-                            <button data-student-name="${student.name}" class="edit-student-btn bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded-lg text-sm transition duration-300">Edit</button>
-                            <button data-student-name="${student.name}" class="remove-btn bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-lg text-sm transition duration-300">Remove</button>
-                        </div>
-                    `;
-                    masterStudentListDiv.appendChild(studentDiv);
-                });
-            } catch (error) {
-                console.error('Error in renderMasterStudents:', error);
-                masterStudentListDiv.innerHTML = 
-                    `<div class="error-message">
-                        <p>Error loading student list</p>
-                    </div>`;
-            }
+        function hideMusicPlayer() {
+            musicPlayer.classList.remove('visible');
+            musicPlayer.classList.add('hidden');
         }
 
-        function renderSummary(searchTerm = '') {
-            try {
-                attendanceSummaryDiv.innerHTML = '';
-                
-                if (Object.keys(appData.finalizedRecords).length === 0) {
-                    attendanceSummaryDiv.innerHTML = `<p class="text-sm text-gray-600">No finalized data available. Finalize a day to see a summary.</p>`;
-                    return;
-                }
-                
-                const summary = {};
-                
-                // Calculate summary from finalized records within date range
-                Object.entries(appData.finalizedRecords).forEach(([date, sessions]) => {
-                    // Skip dates outside the selected range
-                    if (dateRange.start && date < dateRange.start) return;
-                    if (dateRange.end && date > dateRange.end) return;
-                    
-                    Object.values(sessions).forEach(record => {
-                        Object.entries(record).forEach(([name, status]) => {
-                            if (!summary[name]) {
-                                summary[name] = { Present: 0, Absent: 0, Permission: 0 };
-                            }
-                            if (summary[name][status] !== undefined) {
-                                summary[name][status]++;
-                            } else if (status === 'Permission') {
-                                summary[name].Permission++;
-                                summary[name].Present++; // Permission counts as Present
-                            }
-                        });
-                    });
-                });
-                
-                // Filter students based on search term
-                let filteredNames = Object.keys(summary);
-                if (searchTerm) {
-                    filteredNames = filteredNames.filter(name => 
-                        name.toLowerCase().includes(searchTerm.toLowerCase())
-                    );
-                }
-                
-                if (filteredNames.length === 0) {
-                    if (searchTerm) {
-                        attendanceSummaryDiv.innerHTML = `<p class="text-sm text-gray-600">No students match your search.</p>`;
-                    } else {
-                        attendanceSummaryDiv.innerHTML = `<p class="text-sm text-gray-600">No finalized data available for the selected date range.</p>`;
-                    }
-                    return;
-                }
-                
-                // Add date range info
-                const rangeInfo = document.createElement('div');
-                rangeInfo.className = 'text-sm text-gray-600 mb-4 bg-blue-50 p-3 rounded-lg';
-                rangeInfo.innerHTML = `Showing data from <strong>${dateRange.start}</strong> to <strong>${dateRange.end}</strong>`;
-                if (searchTerm) {
-                    rangeInfo.innerHTML += ` • Filtered by: <strong>${searchTerm}</strong>`;
-                }
-                attendanceSummaryDiv.appendChild(rangeInfo);
-                
-                filteredNames.forEach(name => {
-                    const summaryDiv = document.createElement('div');
-                    summaryDiv.className = 'bg-gray-50 p-4 rounded-xl shadow-sm fade-in';
-                    const s = summary[name];
-                    const totalDays = s.Present + s.Absent;
-                    const attendanceRate = totalDays > 0 ? ((s.Present / totalDays) * 100).toFixed(1) : 0;
-                    
-                    // Find student gender
-                    const student = appData.masterStudents.find(s => s.name === name);
-                    const genderTag = student && student.gender === 'male' ? 
-                        '<span class="gender-tag male-tag">Male</span>' : 
-                        '<span class="gender-tag female-tag">Female</span>';
-                    
-                    // Highlight search term in student name
-                    let displayName = name;
-                    if (searchTerm) {
-                        const regex = new RegExp(`(${searchTerm})`, 'gi');
-                        displayName = name.replace(regex, '<span class="summary-search-highlight">$1</span>');
-                    }
-                    
-                    summaryDiv.innerHTML = `
-                        <p class="font-semibold text-lg">${displayName} ${genderTag}</p>
-                        <div class="flex justify-between items-center mt-2 text-sm text-gray-700">
-                            <span>Present: <span class="font-bold text-green-500">${s.Present}</span></span>
-                            <span>Permission: <span class="font-bold text-yellow-500">${s.Permission}</span></span>
-                            <span>Absent: <span class="font-bold text-red-500">${s.Absent}</span></span>
-                            <span>Rate: <span class="font-bold ${attendanceRate >= 80 ? 'text-green-500' : 'text-red-500'}">${attendanceRate}%</span></span>
-                        </div>
-                    `;
-                    attendanceSummaryDiv.appendChild(summaryDiv);
-                });
-            } catch (error) {
-                console.error('Error in renderSummary:', error);
-                attendanceSummaryDiv.innerHTML = 
-                    `<div class="error-message">
-                        <p>Error generating summary</p>
-                    </div>`;
-            }
-        }
-
-        function renderCompleteHistory() {
-            try {
-                // Clear previous table content
-                completeHistoryTable.querySelector('thead tr').innerHTML = '<th>Student</th>';
-                completeHistoryTable.querySelector('tbody').innerHTML = '';
-                
-                if (Object.keys(appData.finalizedRecords).length === 0) {
-                    detailedHistoryView.innerHTML = '<p class="text-sm text-gray-600">No finalized data available.</p>';
-                    return;
-                }
-                
-                // Collect all unique dates with sessions
-                const dateSessions = [];
-                Object.entries(appData.finalizedRecords).forEach(([date, sessions]) => {
-                    Object.keys(sessions).forEach(session => {
-                        dateSessions.push({ date, session });
-                    });
-                });
-                
-                // Sort by date then session
-                dateSessions.sort((a, b) => {
-                    if (a.date === b.date) {
-                        const sessionOrder = { morning: 1, afternoon: 2, evening: 3 };
-                        return (sessionOrder[a.session] || 99) - (sessionOrder[b.session] || 99);
-                    }
-                    return a.date.localeCompare(b.date);
-                });
-                
-                // Add date-session columns to header
-                dateSessions.forEach(({ date, session }) => {
-                    const th = document.createElement('th');
-                    th.textContent = `${date}\n${session}`;
-                    th.className = 'text-center';
-                    th.style.whiteSpace = 'pre-line';
-                    completeHistoryTable.querySelector('thead tr').appendChild(th);
-                });
-                
-                // Add student rows
-                appData.masterStudents.forEach(student => {
-                    const row = document.createElement('tr');
-                    const nameCell = document.createElement('td');
-                    nameCell.textContent = student.name;
-                    nameCell.className = 'font-semibold';
-                    row.appendChild(nameCell);
-                    
-                    // Add attendance data for each date-session
-                    dateSessions.forEach(({ date, session }) => {
-                        const cell = document.createElement('td');
-                        const status = appData.finalizedRecords[date][session][student.name] || 'Absent';
-                        
-                        if (status === 'Permission') {
-                            cell.textContent = 'PER';
-                            cell.className = 'permission-cell';
-                        } else if (status === 'Present') {
-                            cell.textContent = 'P';
-                            cell.className = 'present-cell';
-                        } else {
-                            cell.textContent = 'A';
-                            cell.className = 'absent-cell';
-                        }
-                        
-                        cell.title = `${date} - ${session}: ${status}`;
-                        row.appendChild(cell);
-                    });
-                    
-                    completeHistoryTable.querySelector('tbody').appendChild(row);
-                });
-            } catch (error) {
-                console.error('Error in renderCompleteHistory:', error);
-                detailedHistoryView.innerHTML = 
-                    `<div class="error-message">
-                        <p>Error loading history data</p>
-                    </div>`;
-            }
-        }
-
-        function renderDateHistoryList() {
-            try {
-                dateHistoryListDiv.innerHTML = '';
-                const dates = Object.keys(appData.finalizedRecords);
-                
-                if (dates.length === 0) {
-                    dateHistoryListDiv.innerHTML = `<p class="text-sm text-gray-600">No finalized attendance history available.</p>`;
-                    return;
-                }
-                
-                // Sort dates in descending order (newest first)
-                dates.sort((a, b) => new Date(b) - new Date(a));
-                
-                dates.forEach(date => {
-                    const sessions = Object.keys(appData.finalizedRecords[date]);
-                    const dateItem = document.createElement('div');
-                    dateItem.className = 'date-history-item w-full p-3 rounded-lg bg-gray-200 text-gray-900 font-semibold hover:bg-indigo-200 transition duration-300 fade-in';
-                    
-                    dateItem.innerHTML = `
-                        <button data-date="${date}" class="history-date-btn text-left flex-grow">${date} (${sessions.length} session${sessions.length > 1 ? 's' : ''})</button>
-                        <div class="action-buttons">
-                            <button data-date="${date}" class="view-excel-btn excel-btn text-white font-bold py-1 px-3 rounded-lg text-sm transition duration-300">Excel</button>
-                            <button data-date="${date}" class="delete-date-btn bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-lg text-sm transition duration-300">Delete</button>
-                        </div>
-                    `;
-                    dateHistoryListDiv.appendChild(dateItem);
-                });
-            } catch (error) {
-                console.error('Error in renderDateHistoryList:', error);
-                dateHistoryListDiv.innerHTML = 
-                    `<div class="error-message">
-                        <p>Error loading date history</p>
-                    </div>`;
-            }
-        }
-
-        function showDateDetailView(date) {
-            try {
-                if (!appData.finalizedRecords[date]) return;
-                
-                currentHistoryDate = date;
-                const sessions = appData.finalizedRecords[date];
-                historyDateTitle.textContent = `Attendance for ${date}`;
-                historyDetailContainer.innerHTML = '';
-                
-                Object.entries(sessions).forEach(([session, data]) => {
-                    const sessionHeader = document.createElement('div');
-                    sessionHeader.className = 'text-lg font-bold text-indigo-600 mt-4 mb-2';
-                    sessionHeader.textContent = `Session: ${session.charAt(0).toUpperCase() + session.slice(1)}`;
-                    historyDetailContainer.appendChild(sessionHeader);
-                    
-                    Object.entries(data).sort().forEach(([name, status]) => {
-                        const student = appData.masterStudents.find(s => s.name === name);
-                        const genderTag = student && student.gender === 'male' ? 
-                            '<span class="gender-tag male-tag">Male</span>' : 
-                            '<span class="gender-tag female-tag">Female</span>';
-                        
-                        const detailDiv = document.createElement('div');
-                        detailDiv.className = 'flex items-center justify-between p-2 bg-gray-100 rounded-lg fade-in';
-                        
-                        if (status === 'Permission') {
-                            detailDiv.innerHTML = `
-                                <div>
-                                    <span class="font-medium">${name}</span>
-                                    ${genderTag}
-                                    <span class="permission-badge ml-2">Permission</span>
-                                </div>
-                                <span class="status-icon permission-cell">P</span>
-                            `;
-                        } else if (status === 'Present') {
-                            detailDiv.innerHTML = `
-                                <div>
-                                    <span class="font-medium">${name}</span>
-                                    ${genderTag}
-                                </div>
-                                <span class="status-icon present-icon">✔️</span>
-                            `;
-                        } else {
-                            detailDiv.innerHTML = `
-                                <div>
-                                    <span class="font-medium">${name}</span>
-                                    ${genderTag}
-                                </div>
-                                <span class="status-icon absent-icon">✖️</span>
-                            `;
-                        }
-                        
-                        historyDetailContainer.appendChild(detailDiv);
-                    });
-                });
-
-                dateHistoryListDiv.classList.add('hidden');
-                dateDetailView.classList.remove('hidden');
-            } catch (error) {
-                console.error('Error in showDateDetailView:', error);
-                alert('Error loading date details');
-            }
-        }
-
-        // Check for absence alerts (10+ absences in last 3 months)
-        function checkAbsenceAlerts() {
-            try {
-                absenceAlertsList.innerHTML = '';
-                
-                // Calculate 3 months ago date
-                const threeMonthsAgo = new Date();
-                threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-                const threeMonthsAgoStr = threeMonthsAgo.toISOString().split('T')[0];
-                
-                const alerts = [];
-                
-                // Calculate absences for each student in the last 3 months
-                appData.masterStudents.forEach(student => {
-                    let absences = 0;
-                    const absentDates = [];
-                    
-                    Object.entries(appData.finalizedRecords).forEach(([date, sessions]) => {
-                        // Only count dates within the last 3 months
-                        if (date >= threeMonthsAgoStr) {
-                            Object.values(sessions).forEach(record => {
-                                if (record[student.name] === 'Absent') {
-                                    absences++;
-                                    absentDates.push(date);
-                                }
-                            });
-                        }
-                    });
-                    
-                    if (absences >= 10) {
-                        alerts.push({ student: student.name, absences, absentDates });
-                    }
-                });
-                
-                if (alerts.length === 0) {
-                    absenceAlertsList.innerHTML = '<p class="text-green-600 font-medium">No students with excessive absences.</p>';
-                    absenceAlertsContainer.classList.remove('bg-red-50', 'border-red-200');
-                    absenceAlertsContainer.classList.add('bg-green-50', 'border-green-200');
-                    return 0;
-                }
-                
-                // Sort by most absences first
-                alerts.sort((a, b) => b.absences - a.absences);
-                
-                alerts.forEach(alert => {
-                    const alertDiv = document.createElement('div');
-                    alertDiv.className = 'alert-student p-3 rounded-lg fade-in';
-                    
-                    // Format absent dates for display
-                    const formattedDates = alert.absentDates.map(date => {
-                        return `<span class="absence-date">${date}</span>`;
-                    }).join('');
-                    
-                    alertDiv.innerHTML = `
-                        <div class="flex justify-between items-center">
-                            <span class="font-medium">${alert.student}</span>
-                            <div class="flex items-center gap-2">
-                                <span class="bg-red-100 text-red-800 text-sm font-semibold px-2.5 py-0.5 rounded">
-                                    ${alert.absences} absences
-                                </span>
-                                <button data-student-name="${alert.student}" class="dismiss-alert-btn bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-2 rounded text-xs transition duration-300">
-                                    Dismiss
-                                </button>
-                            </div>
-                        </div>
-                        <div class="alert-details">
-                            <p class="text-sm text-red-700 mb-1">Absent on these dates:</p>
-                            <div class="absence-dates">
-                                ${formattedDates}
-                            </div>
-                        </div>
-                    `;
-                    absenceAlertsList.appendChild(alertDiv);
-                });
-                
-                return alerts.length;
-            } catch (error) {
-                console.error('Error in checkAbsenceAlerts:', error);
-                return 0;
-            }
-        }
-        
-        function updateAdminAlertBadge() {
-            try {
-                const alertCount = checkAbsenceAlerts();
-                if (alertCount > 0) {
-                    adminAlertBadge.textContent = alertCount;
-                    adminAlertBadge.classList.remove('hidden');
-                } else {
-                    adminAlertBadge.classList.add('hidden');
-                }
-            } catch (error) {
-                console.error('Error in updateAdminAlertBadge:', error);
-            }
-        }
-
-        // Permission management functions
-        function hasPermissionOnDate(studentName, date) {
-            try {
-                if (!appData.permissions[studentName]) return false;
-                return appData.permissions[studentName].some(p => p.date === date);
-            } catch (error) {
-                console.error('Error in hasPermissionOnDate:', error);
-                return false;
-            }
-        }
-
-        function getMonthlyPermissionCount(studentName, date) {
-            try {
-                if (!appData.permissions[studentName]) return 0;
-                
-                // Extract month and year from date
-                const dateObj = new Date(date);
-                const monthYear = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
-                
-                return appData.permissions[studentName].filter(p => p.monthYear === monthYear).length;
-            } catch (error) {
-                console.error('Error in getMonthlyPermissionCount:', error);
-                return 0;
-            }
-        }
-
-        function addPermission(studentName, permissionDate, reason = '') {
-            try {
-                if (!appData.permissions[studentName]) {
-                    appData.permissions[studentName] = [];
-                }
-                
-                // Check monthly limit
-                if (getMonthlyPermissionCount(studentName, permissionDate) >= 3) {
-                    alert('This student already has 3 permissions this month!');
-                    return false;
-                }
-                
-                // Check if permission already exists for this date
-                if (hasPermissionOnDate(studentName, permissionDate)) {
-                    alert('This student already has permission for this date!');
-                    return false;
-                }
-                
-                // Extract month and year for tracking
-                const dateObj = new Date(permissionDate);
-                const monthYear = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
-                
-                appData.permissions[studentName].push({
-                    date: permissionDate,
-                    reason: reason,
-                    monthYear: monthYear,
-                    addedDate: new Date().toISOString().split('T')[0]
-                });
-                
-                localStorage.setItem('attendanceData', JSON.stringify(appData));
-                updatePermissionList();
-                renderDailyStudents(datePicker.value, studentSearchInput.value);
-                return true;
-            } catch (error) {
-                console.error('Error in addPermission:', error);
-                alert('Error adding permission');
-                return false;
-            }
-        }
-
-        function removePermission(studentName, date) {
-            try {
-                if (!appData.permissions[studentName]) return;
-                
-                appData.permissions[studentName] = appData.permissions[studentName].filter(
-                    p => p.date !== date
-                );
-                
-                // If no more permissions, remove the student entry
-                if (appData.permissions[studentName].length === 0) {
-                    delete appData.permissions[studentName];
-                }
-                
-                localStorage.setItem('attendanceData', JSON.stringify(appData));
-                updatePermissionList();
-                renderDailyStudents(datePicker.value, studentSearchInput.value);
-            } catch (error) {
-                console.error('Error in removePermission:', error);
-                alert('Error removing permission');
-            }
-        }
-
-        function updatePermissionList() {
-            try {
-                permissionListDiv.innerHTML = '';
-                
-                // Populate student select
-                permissionStudentSelect.innerHTML = '<option value="">Select Student</option>';
-                appData.masterStudents.forEach(student => {
-                    const option = document.createElement('option');
-                    option.value = student.name;
-                    option.textContent = student.name;
-                    permissionStudentSelect.appendChild(option);
-                });
-                
-                // Display active permissions
-                let hasPermissions = false;
-                
-                Object.entries(appData.permissions).forEach(([studentName, permissions]) => {
-                    permissions.forEach(permission => {
-                        hasPermissions = true;
-                        const permissionDiv = document.createElement('div');
-                        permissionDiv.className = 'flex justify-between items-center p-2 bg-yellow-50 rounded-lg';
-                        
-                        permissionDiv.innerHTML = `
-                            <div>
-                                <span class="font-medium">${studentName}</span>
-                                <span class="text-sm text-gray-600"> - ${permission.date}</span>
-                                ${permission.reason ? `<br><span class="text-xs text-gray-500">Reason: ${permission.reason}</span>` : ''}
-                            </div>
-                            <button data-student="${studentName}" data-date="${permission.date}" class="remove-permission-admin-btn bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-lg text-sm">
-                                Remove
-                            </button>
-                        `;
-                        
-                        permissionListDiv.appendChild(permissionDiv);
-                    });
-                });
-                
-                if (!hasPermissions) {
-                    permissionListDiv.innerHTML = '<p class="text-sm text-gray-600">No active permissions.</p>';
-                }
-            } catch (error) {
-                console.error('Error in updatePermissionList:', error);
-                permissionListDiv.innerHTML = 
-                    `<div class="error-message">
-                        <p>Error loading permissions</p>
-                    </div>`;
-            }
-        }
-
-        // Session management
-        function setSession(session) {
-            try {
-                currentSession = session;
-                
-                // Update session buttons
-                [sessionMorningBtn, sessionAfternoonBtn, sessionEveningBtn].forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                
-                const sessionText = session.charAt(0).toUpperCase() + session.slice(1);
-                sessionIndicator.textContent = `Session: ${sessionText}`;
-                
-                if (session === 'morning') {
-                    sessionMorningBtn.classList.add('active');
-                } else if (session === 'afternoon') {
-                    sessionAfternoonBtn.classList.add('active');
-                } else if (session === 'evening') {
-                    sessionEveningBtn.classList.add('active');
-                }
-                
-                renderDailyStudents(datePicker.value, studentSearchInput.value);
-            } catch (error) {
-                console.error('Error in setSession:', error);
-            }
-        }
-
-        // Action functions
-        function addMasterStudent() {
-            try {
-                const studentName = newStudentNameInput.value.trim();
-                const studentGender = newStudentGenderSelect.value;
-                
-                if (!studentName) {
-                    alert("Please enter a student name.");
-                    return;
-                }
-
-                if (appData.masterStudents.some(student => student.name === studentName)) {
-                    alert("Student with this name already exists.");
-                    newStudentNameInput.value = '';
-                    return;
-                }
-
-                appData.masterStudents.push({name: studentName, gender: studentGender});
-                newStudentNameInput.value = '';
-                
-                // Save to localStorage and re-render
-                localStorage.setItem('attendanceData', JSON.stringify(appData));
-                renderMasterStudents();
-                setupDailyAttendanceListener();
-                updatePermissionList();
-                
-                // Show success message
-                setTimeout(() => {
-                    const successMsg = document.createElement('div');
-                    successMsg.className = 'text-green-600 text-sm mt-2';
-                    successMsg.textContent = 'Student added successfully!';
-                    masterStudentListDiv.parentNode.insertBefore(successMsg, masterStudentListDiv.nextSibling);
-                    setTimeout(() => successMsg.remove(), 3000);
-                }, 100);
-            } catch (error) {
-                console.error('Error in addMasterStudent:', error);
-                alert('Error adding student');
-            }
-        }
-
-        function removeMasterStudent(studentName) {
-            try {
-                if (!confirm(`Are you sure you want to remove ${studentName}? This will also remove all their attendance records.`)) {
-                    return;
-                }
-                
-                appData.masterStudents = appData.masterStudents.filter(student => student.name !== studentName);
-                
-                // Also remove from all attendance records
-                Object.keys(appData.sessions).forEach(date => {
-                    Object.keys(appData.sessions[date]).forEach(session => {
-                        if (appData.sessions[date][session][studentName]) {
-                            delete appData.sessions[date][session][studentName];
-                        }
-                    });
-                });
-                
-                // Remove from finalized records
-                Object.keys(appData.finalizedRecords).forEach(date => {
-                    Object.keys(appData.finalizedRecords[date]).forEach(session => {
-                        if (appData.finalizedRecords[date][session][studentName]) {
-                            delete appData.finalizedRecords[date][session][studentName];
-                        }
-                    });
-                });
-                
-                // Remove permissions
-                if (appData.permissions[studentName]) {
-                    delete appData.permissions[studentName];
-                }
-                
-                // Save to localStorage and re-render
-                localStorage.setItem('attendanceData', JSON.stringify(appData));
-                renderMasterStudents();
-                setupDailyAttendanceListener();
-                renderSummary(summarySearchInput.value);
-                updateAdminAlertBadge();
-                updatePermissionList();
-                
-                alert(`Student "${studentName}" removed successfully.`);
-            } catch (error) {
-                console.error('Error in removeMasterStudent:', error);
-                alert('Error removing student');
-            }
-        }
-
-        function editStudent(studentName) {
-            try {
-                const student = appData.masterStudents.find(s => s.name === studentName);
-                if (!student) return;
-                
-                currentEditStudent = studentName;
-                editStudentNameInput.value = student.name;
-                editStudentGenderSelect.value = student.gender;
-                editStudentModal.classList.remove('hidden');
-            } catch (error) {
-                console.error('Error in editStudent:', error);
-                alert('Error opening edit modal');
-            }
-        }
-
-        function saveStudentEdit() {
-            try {
-                if (!currentEditStudent) return;
-                
-                const newName = editStudentNameInput.value.trim();
-                const newGender = editStudentGenderSelect.value;
-                
-                if (!newName) {
-                    alert("Student name cannot be empty.");
-                    return;
-                }
-                
-                // Check if the new name already exists (excluding the current student)
-                if (appData.masterStudents.some(student => student.name === newName && student.name !== currentEditStudent)) {
-                    alert("Another student with this name already exists.");
-                    return;
-                }
-                
-                // Update the student in the master list
-                const studentIndex = appData.masterStudents.findIndex(s => s.name === currentEditStudent);
-                if (studentIndex !== -1) {
-                    appData.masterStudents[studentIndex].name = newName;
-                    appData.masterStudents[studentIndex].gender = newGender;
-                    
-                    // Update all session records with the new name
-                    Object.keys(appData.sessions).forEach(date => {
-                        Object.keys(appData.sessions[date]).forEach(session => {
-                            if (appData.sessions[date][session][currentEditStudent] !== undefined) {
-                                appData.sessions[date][session][newName] = appData.sessions[date][session][currentEditStudent];
-                                delete appData.sessions[date][session][currentEditStudent];
-                            }
-                        });
-                    });
-                    
-                    // Update all finalized records with the new name
-                    Object.keys(appData.finalizedRecords).forEach(date => {
-                        Object.keys(appData.finalizedRecords[date]).forEach(session => {
-                            if (appData.finalizedRecords[date][session][currentEditStudent] !== undefined) {
-                                appData.finalizedRecords[date][session][newName] = appData.finalizedRecords[date][session][currentEditStudent];
-                                delete appData.finalizedRecords[date][session][currentEditStudent];
-                            }
-                        });
-                    });
-                    
-                    // Update permissions
-                    if (appData.permissions[currentEditStudent]) {
-                        appData.permissions[newName] = appData.permissions[currentEditStudent];
-                        delete appData.permissions[currentEditStudent];
-                    }
-                }
-                
-                // Save to localStorage and re-render
-                localStorage.setItem('attendanceData', JSON.stringify(appData));
-                renderMasterStudents();
-                setupDailyAttendanceListener();
-                renderSummary(summarySearchInput.value);
-                updateAdminAlertBadge();
-                updatePermissionList();
-                
-                // Close the modal
-                editStudentModal.classList.add('hidden');
-                currentEditStudent = null;
-                
-                alert('Student updated successfully!');
-            } catch (error) {
-                console.error('Error in saveStudentEdit:', error);
-                alert('Error saving student changes');
-            }
-        }
-
-        function updateStatus(studentName, status) {
-            try {
-                const selectedDate = datePicker.value;
-                
-                if (!appData.sessions[selectedDate]) {
-                    appData.sessions[selectedDate] = {};
-                }
-                if (!appData.sessions[selectedDate][currentSession]) {
-                    appData.sessions[selectedDate][currentSession] = {};
-                }
-                
-                appData.sessions[selectedDate][currentSession][studentName] = status;
-                
-                // Save to localStorage and re-render
-                localStorage.setItem('attendanceData', JSON.stringify(appData));
-                
-                // Re-render with current search term
-                renderDailyStudents(selectedDate, studentSearchInput.value);
-            } catch (error) {
-                console.error('Error in updateStatus:', error);
-                alert('Error updating status');
-            }
-        }
-
-        function finalizeAndExport() {
-            try {
-                if (appData.masterStudents.length === 0) {
-                    exportMessageDiv.textContent = "Cannot save empty attendance data.";
-                    exportMessageDiv.className = "text-center text-sm my-2 text-red-600";
-                    return;
-                }
-                
-                exportMessageDiv.textContent = "Saving...";
-                exportMessageDiv.className = "text-center text-sm my-2 text-blue-600";
-                
-                const selectedDate = datePicker.value;
-                
-                if (!appData.sessions[selectedDate]) {
-                    appData.sessions[selectedDate] = {};
-                }
-                if (!appData.sessions[selectedDate][currentSession]) {
-                    appData.sessions[selectedDate][currentSession] = {};
-                }
-                
-                // Create finalized record
-                const dataToSave = {};
-                appData.masterStudents.forEach(student => {
-                    // Check for permission first
-                    if (hasPermissionOnDate(student.name, selectedDate)) {
-                        dataToSave[student.name] = 'Permission';
-                    } else {
-                        dataToSave[student.name] = appData.sessions[selectedDate][currentSession][student.name] || 'Absent';
-                    }
-                });
-                
-                // Save with session identifier
-                if (!appData.finalizedRecords[selectedDate]) {
-                    appData.finalizedRecords[selectedDate] = {};
-                }
-                appData.finalizedRecords[selectedDate][currentSession] = dataToSave;
-                
-                localStorage.setItem('attendanceData', JSON.stringify(appData));
-                
-                exportMessageDiv.textContent = `Attendance for ${selectedDate} (${currentSession}) saved successfully!`;
-                exportMessageDiv.className = "text-center text-sm my-2 text-green-600";
-                
-                renderSummary(summarySearchInput.value);
-                renderDateHistoryList();
-                updateAdminAlertBadge();
-                
-                setTimeout(() => {
-                    exportMessageDiv.textContent = "";
-                    exportMessageDiv.className = "text-center text-sm my-2 text-gray-600";
-                }, 3000);
-            } catch (error) {
-                console.error('Error in finalizeAndExport:', error);
-                exportMessageDiv.textContent = "Error saving attendance data.";
-                exportMessageDiv.className = "text-center text-sm my-2 text-red-600";
-            }
-        }
-
-        function saveHistoryAsExcel() {
-            try {
-                if (!currentHistoryDate) return;
-                
-                if (typeof XLSX === 'undefined') {
-                    alert('Excel library not loaded. Please check your internet connection.');
-                    return;
-                }
-                
-                const sessions = appData.finalizedRecords[currentHistoryDate];
-                const allData = [];
-                
-                Object.entries(sessions).forEach(([session, data]) => {
-                    // Add session header
-                    allData.push([`Session: ${session.charAt(0).toUpperCase() + session.slice(1)}`]);
-                    allData.push(['Student Name', 'Gender', 'Status']);
-                    
-                    Object.entries(data).sort().forEach(([name, status]) => {
-                        // Find student gender
-                        const student = appData.masterStudents.find(s => s.name === name);
-                        const gender = student ? student.gender : 'Unknown';
-                        
-                        allData.push([name, gender, status]);
-                    });
-                    
-                    // Add empty row between sessions
-                    allData.push([]);
-                });
-                
-                // Remove last empty row if exists
-                if (allData[allData.length - 1].length === 0) {
-                    allData.pop();
-                }
-                
-                // Create worksheet
-                const ws = XLSX.utils.aoa_to_sheet(allData);
-                
-                // Create workbook
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'Attendance');
-                
-                // Export to Excel
-                XLSX.writeFile(wb, `Attendance_${currentHistoryDate}.xlsx`);
-            } catch (error) {
-                console.error('Error in saveHistoryAsExcel:', error);
-                alert('Error exporting to Excel');
-            }
-        }
-
-        function saveCompleteHistoryAsExcel() {
-            try {
-                if (Object.keys(appData.finalizedRecords).length === 0) {
-                    alert('No finalized data available to export.');
-                    return;
-                }
-                
-                if (typeof XLSX === 'undefined') {
-                    alert('Excel library not loaded. Please check your internet connection.');
-                    return;
-                }
-                
-                // Get all dates and sort them
-                const dateSessions = [];
-                Object.entries(appData.finalizedRecords).forEach(([date, sessions]) => {
-                    Object.keys(sessions).forEach(session => {
-                        dateSessions.push({ date, session });
-                    });
-                });
-                
-                // Sort by date then session
-                dateSessions.sort((a, b) => {
-                    if (a.date === b.date) {
-                        const sessionOrder = { morning: 1, afternoon: 2, evening: 3 };
-                        return (sessionOrder[a.session] || 99) - (sessionOrder[b.session] || 99);
-                    }
-                    return a.date.localeCompare(b.date);
-                });
-                
-                // Prepare data for Excel
-                const excelData = [['Student', 'Gender', ...dateSessions.map(ds => `${ds.date}\n${ds.session}`)]];
-                
-                // Add student rows
-                appData.masterStudents.forEach(student => {
-                    const row = [student.name, student.gender];
-                    
-                    // Add attendance data for each date-session
-                    dateSessions.forEach(({ date, session }) => {
-                        const status = appData.finalizedRecords[date][session][student.name] || 'Absent';
-                        row.push(status === 'Permission' ? 'PER' : (status === 'Present' ? 'P' : 'A'));
-                    });
-                    
-                    excelData.push(row);
-                });
-                
-                // Create worksheet
-                const ws = XLSX.utils.aoa_to_sheet(excelData);
-                
-                // Create workbook
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'Attendance History');
-                
-                // Export to Excel
-                XLSX.writeFile(wb, `Complete_Attendance_History.xlsx`);
-            } catch (error) {
-                console.error('Error in saveCompleteHistoryAsExcel:', error);
-                alert('Error exporting to Excel');
-            }
-        }
-
-        function saveSummaryAsPdf() {
-            try {
-                if (typeof window.jspdf === 'undefined') {
-                    alert('PDF library not loaded. Please check your internet connection.');
-                    return;
-                }
-                
-                const { jsPDF } = window.jspdf;
-                
-                // Create a new PDF document
-                const doc = new jsPDF();
-                
-                // First, let's try with the default font for English headers
-                doc.setFontSize(22);
-                doc.text('Attendance Summary', 14, 22);
-                
-                // Add date information
-                const date = new Date().toLocaleDateString();
-                doc.setFontSize(12);
-                doc.text(`Generated on: ${date}`, 14, 32);
-                
-                // Add date range info
-                doc.text(`Date Range: ${dateRange.start} to ${dateRange.end}`, 14, 42);
-                
-                // Add search term if applicable
-                if (summarySearchInput.value) {
-                    doc.text(`Filtered by: ${summarySearchInput.value}`, 14, 52);
-                }
-                
-                // Prepare summary data
-                const summary = {};
-                
-                // Calculate summary from finalized records within date range
-                Object.entries(appData.finalizedRecords).forEach(([date, sessions]) => {
-                    // Skip dates outside the selected range
-                    if (dateRange.start && date < dateRange.start) return;
-                    if (dateRange.end && date > dateRange.end) return;
-                    
-                    Object.values(sessions).forEach(record => {
-                        Object.entries(record).forEach(([name, status]) => {
-                            if (!summary[name]) {
-                                summary[name] = { Present: 0, Absent: 0, Permission: 0 };
-                            }
-                            if (status === 'Permission') {
-                                summary[name].Permission++;
-                                summary[name].Present++;
-                            } else if (summary[name][status] !== undefined) {
-                                summary[name][status]++;
-                            }
-                        });
-                    });
-                });
-                
-                // Filter by search term if applicable
-                let filteredNames = Object.keys(summary);
-                if (summarySearchInput.value) {
-                    filteredNames = filteredNames.filter(name => 
-                        name.toLowerCase().includes(summarySearchInput.value.toLowerCase())
-                    );
-                }
-                
-                // Sort names
-                filteredNames.sort();
-                
-                // We'll create a CSV format first since PDF Amharic support is tricky
-                // Then offer both options
-                
-                // Create CSV content
-                const csvContent = [
-                    ['Student', 'Gender', 'Present', 'Permission', 'Absent', 'Rate'],
-                    ...filteredNames.map(name => {
-                        const s = summary[name];
-                        const totalDays = s.Present + s.Absent;
-                        const attendanceRate = totalDays > 0 ? ((s.Present / totalDays) * 100).toFixed(1) : 0;
-                        
-                        // Find student gender
-                        const student = appData.masterStudents.find(s => s.name === name);
-                        const gender = student ? student.gender : 'Unknown';
-                        
-                        return [name, gender, s.Present, s.Permission, s.Absent, `${attendanceRate}%`];
-                    })
-                ];
-                
-                // Convert to CSV string
-                const csvString = csvContent.map(row => 
-                    row.map(cell => `"${cell}"`).join(',')
-                ).join('\n');
-                
-                // Create a Blob and download as CSV (better for Amharic)
-                const csvBlob = new Blob(['\ufeff' + csvString], { type: 'text/csv;charset=utf-8;' });
-                const csvUrl = URL.createObjectURL(csvBlob);
-                
-                // Create Excel data for better Amharic support
-                const excelData = [
-                    ['Attendance Summary'],
-                    [`Generated on: ${date}`],
-                    [`Date Range: ${dateRange.start} to ${dateRange.end}`],
-                    ...(summarySearchInput.value ? [`Filtered by: ${summarySearchInput.value}`] : []),
-                    [],
-                    ['Student', 'Gender', 'Present', 'Permission', 'Absent', 'Attendance Rate (%)']
-                ];
-                
-                // Add student data
-                filteredNames.forEach(name => {
-                    const s = summary[name];
-                    const totalDays = s.Present + s.Absent;
-                    const attendanceRate = totalDays > 0 ? ((s.Present / totalDays) * 100).toFixed(1) : 0;
-                    
-                    const student = appData.masterStudents.find(s => s.name === name);
-                    const gender = student ? student.gender : 'Unknown';
-                    
-                    excelData.push([name, gender, s.Present, s.Permission, s.Absent, attendanceRate]);
-                });
-                
-                // Ask user which format they prefer
-                const userChoice = confirm(
-                    "For Amharic characters:\n" +
-                    "• Click OK for Excel (recommended - supports Amharic)\n" +
-                    "• Click Cancel for PDF (limited Amharic support)"
-                );
-                
-                if (userChoice && typeof XLSX !== 'undefined') {
-                    // Export to Excel (better Amharic support)
-                    const ws = XLSX.utils.aoa_to_sheet(excelData);
-                    const wb = XLSX.utils.book_new();
-                    XLSX.utils.book_append_sheet(wb, ws, 'Attendance Summary');
-                    
-                    // Create filename with date
-                    const today = new Date().toISOString().split('T')[0];
-                    const fileName = summarySearchInput.value 
-                        ? `Attendance_Summary_${summarySearchInput.value}_${today}.xlsx`
-                        : `Attendance_Summary_${today}.xlsx`;
-                    
-                    XLSX.writeFile(wb, fileName);
-                } else {
-                    // Continue with PDF (limited Amharic)
-                    let yPosition = summarySearchInput.value ? 62 : 55;
-                    
-                    // Add table headers to PDF
-                    doc.setFontSize(12);
-                    doc.setFont(undefined, 'bold');
-                    doc.text('Student', 14, yPosition);
-                    doc.text('Gender', 70, yPosition);
-                    doc.text('Present', 100, yPosition);
-                    doc.text('Permission', 130, yPosition);
-                    doc.text('Absent', 160, yPosition);
-                    doc.text('Rate', 190, yPosition);
-                    yPosition += 8;
-                    
-                    // Add a line separator
-                    doc.line(14, yPosition, 200, yPosition);
-                    yPosition += 10;
-                    
-                    // Add student data to PDF (Amharic names will appear as placeholders or garbled)
-                    doc.setFont(undefined, 'normal');
-                    filteredNames.forEach(name => {
-                        const s = summary[name];
-                        const totalDays = s.Present + s.Absent;
-                        const attendanceRate = totalDays > 0 ? ((s.Present / totalDays) * 100).toFixed(1) : 0;
-                        
-                        // Find student gender
-                        const student = appData.masterStudents.find(s => s.name === name);
-                        const gender = student ? student.gender : 'Unknown';
-                        
-                        if (yPosition > 270) {
-                            doc.addPage();
-                            yPosition = 20;
-                        }
-                        
-                        // Try to display Amharic names (may appear garbled)
-                        const displayName = name.length > 20 ? name.substring(0, 20) + '...' : name;
-                        doc.text(displayName, 14, yPosition);
-                        doc.text(gender, 70, yPosition);
-                        doc.text(s.Present.toString(), 100, yPosition);
-                        doc.text(s.Permission.toString(), 130, yPosition);
-                        doc.text(s.Absent.toString(), 160, yPosition);
-                        doc.text(`${attendanceRate}%`, 190, yPosition);
-                        
-                        yPosition += 8;
-                    });
-                    
-                    // Add totals if there's space
-                    if (yPosition < 270) {
-                        yPosition += 10;
-                        doc.line(14, yPosition, 200, yPosition);
-                        yPosition += 8;
-                        
-                        doc.setFont(undefined, 'bold');
-                        const totalPresent = filteredNames.reduce((acc, name) => acc + summary[name].Present, 0);
-                        const totalPermission = filteredNames.reduce((acc, name) => acc + summary[name].Permission, 0);
-                        const totalAbsent = filteredNames.reduce((acc, name) => acc + summary[name].Absent, 0);
-                        const totalDays = totalPresent + totalAbsent;
-                        const overallRate = totalDays > 0 ? ((totalPresent / totalDays) * 100).toFixed(1) : 0;
-                        
-                        doc.text('TOTALS:', 14, yPosition);
-                        doc.text('', 70, yPosition);
-                        doc.text(totalPresent.toString(), 100, yPosition);
-                        doc.text(totalPermission.toString(), 130, yPosition);
-                        doc.text(totalAbsent.toString(), 160, yPosition);
-                        doc.text(`${overallRate}%`, 190, yPosition);
-                    }
-                    
-                    const today = new Date().toISOString().split('T')[0];
-                    const fileName = summarySearchInput.value 
-                        ? `Attendance_Summary_${summarySearchInput.value}_${today}.pdf`
-                        : `Attendance_Summary_${today}.pdf`;
-                    
-                    // Add a note about Amharic characters
-                    doc.setFontSize(10);
-                    doc.text('Note: For proper Amharic character display, please use the Excel export option.', 14, 280);
-                    
-                    doc.save(fileName);
-                    
-                    // Also download CSV as backup
-                    const downloadLink = document.createElement('a');
-                    downloadLink.href = csvUrl;
-                    downloadLink.download = `Attendance_Summary_${today}.csv`;
-                    document.body.appendChild(downloadLink);
-                    downloadLink.click();
-                    document.body.removeChild(downloadLink);
-                    
-                    alert("PDF downloaded! For better Amharic support, a CSV file was also downloaded.");
-                }
-            } catch (error) {
-                console.error('Error in saveSummaryAsPdf:', error);
-                alert('Error generating PDF/Excel');
-            }
-        }
-        
-        function resetAllData() {
-            try {
-                // Reset all data to default
-                const defaultData = {
-                    masterStudents: [],
-                    attendanceRecords: {},
-                    finalizedRecords: {},
-                    permissions: {},
-                    sessions: {},
-                    users: [
-                        {username: "admin", password: "0730", role: "admin"},
-                        {username: "user", password: "1234", role: "user"}
-                    ]
-                };
-                
-                localStorage.setItem('attendanceData', JSON.stringify(defaultData));
-                appData = defaultData;
-                
-                // Re-render all components
-                renderMasterStudents();
-                setupDailyAttendanceListener();
-                renderSummary(summarySearchInput.value);
-                renderDateHistoryList();
-                updateAdminAlertBadge();
-                updatePermissionList();
-                setSession('morning');
-                
-                // Show success message
-                alert("All data has been reset successfully!");
-            } catch (error) {
-                console.error('Error in resetAllData:', error);
-                alert('Error resetting data');
-            }
-        }
-        
-        function deleteDateAttendance(date) {
-            try {
-                if (appData.finalizedRecords[date]) {
-                    delete appData.finalizedRecords[date];
-                }
-                
-                if (appData.sessions[date]) {
-                    delete appData.sessions[date];
-                }
-                
-                // Save to localStorage
-                localStorage.setItem('attendanceData', JSON.stringify(appData));
-                
-                // Re-render components
-                renderSummary(summarySearchInput.value);
-                renderDateHistoryList();
-                updateAdminAlertBadge();
-                
-                // Show success message
-                alert(`Attendance data for ${date} has been deleted successfully!`);
-            } catch (error) {
-                console.error('Error in deleteDateAttendance:', error);
-                alert('Error deleting date data');
-            }
-        }
-
-        function exportDateToExcel(date) {
-            try {
-                if (typeof XLSX === 'undefined') {
-                    alert('Excel library not loaded. Please check your internet connection.');
-                    return;
-                }
-                
-                const sessions = appData.finalizedRecords[date];
-                const allData = [];
-                
-                Object.entries(sessions).forEach(([session, data]) => {
-                    // Add session header
-                    allData.push([`Session: ${session.charAt(0).toUpperCase() + session.slice(1)}`]);
-                    allData.push(['Student Name', 'Gender', 'Status']);
-                    
-                    Object.entries(data).sort().forEach(([name, status]) => {
-                        // Find student gender
-                        const student = appData.masterStudents.find(s => s.name === name);
-                        const gender = student ? student.gender : 'Unknown';
-                        
-                        allData.push([name, gender, status]);
-                    });
-                    
-                    // Add empty row between sessions
-                    allData.push([]);
-                });
-                
-                // Remove last empty row if exists
-                if (allData[allData.length - 1].length === 0) {
-                    allData.pop();
-                }
-                
-                // Create worksheet
-                const ws = XLSX.utils.aoa_to_sheet(allData);
-                
-                // Create workbook
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'Attendance');
-                
-                // Export to Excel
-                XLSX.writeFile(wb, `Attendance_${date}.xlsx`);
-            } catch (error) {
-                console.error('Error in exportDateToExcel:', error);
-                alert('Error exporting to Excel');
-            }
-        }
-        
-        // Apply date range filter
-        function applyDateRange() {
-            try {
-                dateRange.start = startDateInput.value;
-                dateRange.end = endDateInput.value;
-                
-                if (dateRange.start && dateRange.end && dateRange.start > dateRange.end) {
-                    alert("Start date cannot be after end date.");
-                    return;
-                }
-                
-                renderSummary(summarySearchInput.value);
-            } catch (error) {
-                console.error('Error in applyDateRange:', error);
-                alert('Error applying date range');
-            }
-        }
-
-        // Set gender filter
-        function setGenderFilter(gender) {
-            try {
-                currentGenderFilter = gender;
-                
-                // Update button styles
-                allGenderBtn.className = gender === 'all' ? 'gender-btn active' : 'gender-btn inactive';
-                maleGenderBtn.className = gender === 'male' ? 'gender-btn active' : 'gender-btn inactive';
-                femaleGenderBtn.className = gender === 'female' ? 'gender-btn active' : 'gender-btn inactive';
-                
-                // Re-render students with the new filter
-                const selectedDate = datePicker.value;
-                renderDailyStudents(selectedDate, studentSearchInput.value);
-            } catch (error) {
-                console.error('Error in setGenderFilter:', error);
-            }
-        }
-
-        // Toggle between summary and detailed history views
-        function showSummaryView() {
-            summaryView.classList.remove('hidden');
-            detailedHistoryView.classList.add('hidden');
-            showSummaryViewBtn.classList.add('bg-indigo-700');
-            showHistoryViewBtn.classList.remove('bg-purple-700');
-        }
-
-        function showHistoryView() {
-            summaryView.classList.add('hidden');
-            detailedHistoryView.classList.remove('hidden');
-            showSummaryViewBtn.classList.remove('bg-indigo-700');
-            showHistoryViewBtn.classList.add('bg-purple-700');
-            renderCompleteHistory();
-        }
-
-        // New function to handle password submission
-        function handleAdminPassword() {
-            try {
-                const password = adminPasswordInput.value;
-                const user = appData.users.find(u => u.password === password);
-                
-                if (user) {
-                    showSection('adminSection');
-                    passwordMessage.textContent = '';
-                    adminPasswordInput.value = '';
-                } else {
-                    passwordMessage.textContent = 'Incorrect password. Please try again.';
-                }
-            } catch (error) {
-                console.error('Error in handleAdminPassword:', error);
-                passwordMessage.textContent = 'Error checking password.';
-            }
-        }
-
-        // Event listeners
-        addStudentBtn.addEventListener('click', addMasterStudent);
-        datePicker.addEventListener('change', setupDailyAttendanceListener);
-        finalizeButton.addEventListener('click', finalizeAndExport);
-        saveExcelBtn.addEventListener('click', saveHistoryAsExcel);
-        saveSummaryPdfBtn.addEventListener('click', saveSummaryAsPdf);
-        saveHistoryExcelBtn.addEventListener('click', saveCompleteHistoryAsExcel);
-        applyDateRangeBtn.addEventListener('click', applyDateRange);
-        showSummaryViewBtn.addEventListener('click', showSummaryView);
-        showHistoryViewBtn.addEventListener('click', showHistoryView);
-        
-        // Gender filter buttons
-        allGenderBtn.addEventListener('click', () => setGenderFilter('all'));
-        maleGenderBtn.addEventListener('click', () => setGenderFilter('male'));
-        femaleGenderBtn.addEventListener('click', () => setGenderFilter('female'));
-        
-        // Summary search functionality
-        summarySearchInput.addEventListener('input', () => {
-            renderSummary(summarySearchInput.value);
-        });
-        
-        // Reset functionality
-        resetSummaryBtn.addEventListener('click', () => {
-            resetModal.classList.remove('hidden');
-        });
-        
-        cancelResetBtn.addEventListener('click', () => {
-            resetModal.classList.add('hidden');
-        });
-        
-        confirmResetBtn.addEventListener('click', () => {
-            resetModal.classList.add('hidden');
-            resetAllData();
-        });
-        
-        // Date deletion functionality
-        dateHistoryListDiv.addEventListener('click', (event) => {
-            const target = event.target;
-            if (target.classList.contains('delete-date-btn')) {
-                dateToDelete = target.dataset.date;
-                deleteDateMessage.textContent = `Are you sure you want to delete attendance data for ${dateToDelete}?`;
-                deleteDateModal.classList.remove('hidden');
-            } else if (target.classList.contains('history-date-btn')) {
-                showDateDetailView(target.dataset.date);
-            } else if (target.classList.contains('view-excel-btn')) {
-                exportDateToExcel(target.dataset.date);
-            }
-        });
-        
-        cancelDeleteBtn.addEventListener('click', () => {
-            deleteDateModal.classList.add('hidden');
-            dateToDelete = null;
-        });
-        
-        confirmDeleteBtn.addEventListener('click', () => {
-            deleteDateModal.classList.add('hidden');
-            if (dateToDelete) {
-                deleteDateAttendance(dateToDelete);
-                dateToDelete = null;
-            }
-        });
-        
-        // Student editing functionality
-        masterStudentListDiv.addEventListener('click', (event) => {
-            const target = event.target;
-            if (target.classList.contains('edit-student-btn')) {
-                editStudent(target.dataset.studentName);
-            } else if (target.classList.contains('remove-btn')) {
-                const studentName = target.dataset.studentName;
-                if (studentName) {
-                    removeMasterStudent(studentName);
-                }
-            }
-        });
-        
-        cancelEditBtn.addEventListener('click', () => {
-            editStudentModal.classList.add('hidden');
-            currentEditStudent = null;
-        });
-        
-        saveEditBtn.addEventListener('click', saveStudentEdit);
-        
-        // Search functionality
-        studentSearchInput.addEventListener('input', () => {
-            const searchTerm = studentSearchInput.value;
-            const selectedDate = datePicker.value;
-            renderDailyStudents(selectedDate, searchTerm);
-        });
-        
-        dailyAttendanceContainer.addEventListener('click', (event) => {
-            const target = event.target;
-            if (target.classList.contains('status-btn')) {
-                const studentName = target.dataset.studentName;
-                const status = target.dataset.status;
-                if (studentName && status) {
-                    updateStatus(studentName, status);
-                }
-            } else if (target.classList.contains('give-permission-btn')) {
-                const studentName = target.dataset.studentName;
-                if (studentName) {
-                    // Check monthly limit
-                    const monthlyCount = getMonthlyPermissionCount(studentName, datePicker.value);
-                    if (monthlyCount >= 3) {
-                        alert('This student already has 3 permissions this month!');
-                        return;
-                    }
-                    
-                    currentPermissionStudent = studentName;
-                    modalPermissionDateInput.value = datePicker.value;
-                    permissionLimitWarningDiv.classList.toggle('hidden', monthlyCount < 3);
-                    permissionModal.classList.remove('hidden');
-                }
-            } else if (target.classList.contains('remove-permission-btn')) {
-                const studentName = target.dataset.studentName;
-                if (studentName && confirm('Remove permission for this student?')) {
-                    removePermission(studentName, datePicker.value);
-                }
-            }
-        });
-
-        // Permission list event listener
-        permissionListDiv.addEventListener('click', (event) => {
-            const target = event.target;
-            if (target.classList.contains('remove-permission-admin-btn')) {
-                const studentName = target.dataset.student;
-                const permissionDate = target.dataset.date;
-                if (studentName && permissionDate) {
-                    removePermission(studentName, permissionDate);
-                }
-            }
-        });
-
-        // Dismiss alert functionality
-        absenceAlertsList.addEventListener('click', (event) => {
-            const target = event.target;
-            if (target.classList.contains('dismiss-alert-btn')) {
-                target.closest('.alert-student').remove();
-                updateAdminAlertBadge();
-            }
-        });
-
-        closeDateViewBtn.addEventListener('click', () => {
-            dateDetailView.classList.add('hidden');
-            dateHistoryListDiv.classList.remove('hidden');
-            currentHistoryDate = null;
-        });
-
-        // Session button event listeners
-        sessionMorningBtn.addEventListener('click', () => setSession('morning'));
-        sessionAfternoonBtn.addEventListener('click', () => setSession('afternoon'));
-        sessionEveningBtn.addEventListener('click', () => setSession('evening'));
-
-        // Permission modal event listeners
-        cancelPermissionBtn.addEventListener('click', () => {
-            permissionModal.classList.add('hidden');
-            currentPermissionStudent = null;
-        });
-
-        savePermissionBtn.addEventListener('click', () => {
-            if (!currentPermissionStudent) return;
+        // Start playing music when page loads (with user interaction requirement)
+        function initializeMusic() {
+            // Show music player on landing page
+            setTimeout(() => {
+                showMusicPlayer();
+            }, 1000);
             
-            const permissionDate = modalPermissionDateInput.value;
-            const reason = permissionReasonInput.value.trim();
+            // Try to play music automatically (some browsers require user interaction)
+            const playPromise = backgroundMusic.play();
             
-            if (addPermission(currentPermissionStudent, permissionDate, reason)) {
-                permissionModal.classList.add('hidden');
-                permissionReasonInput.value = '';
-                currentPermissionStudent = null;
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Autoplay prevented. Waiting for user interaction.");
+                    landingMusicText.textContent = 'Play Music';
+                    landingMusicIcon.className = 'fas fa-play music-icon';
+                    musicIcon.className = 'fas fa-play';
+                });
             }
+        }
+
+        // Event Listeners for Music
+        musicToggle.addEventListener('click', toggleMusic);
+        landingMusicToggle.addEventListener('click', () => {
+            toggleMusic();
+            showMusicPlayer();
+        });
+        
+        volumeSlider.addEventListener('input', updateVolume);
+        
+        musicClose.addEventListener('click', () => {
+            hideMusicPlayer();
         });
 
-        // Add permission from admin panel
-        addPermissionBtn.addEventListener('click', () => {
-            const studentName = permissionStudentSelect.value;
-            const permissionDate = permissionDateInput.value;
+        // Initialize music when page loads
+        window.addEventListener('load', initializeMusic);
+
+        // --- Permanent Header Logic: Calculate height and set content padding ---
+        function setHeroPadding() {
+            if (smartNavWrapper && heroSection && !mainGallery.classList.contains('hidden')) {
+                const navHeight = smartNavWrapper.offsetHeight;
+                // Add the calculated height plus a little extra for spacing
+                heroSection.style.paddingTop = `${navHeight + 32}px`; 
+            }
+        }
+
+        // Call the padding function on load and resize
+        window.addEventListener('load', setHeroPadding);
+        window.addEventListener('resize', setHeroPadding);
+        // --- End Permanent Header Logic ---
+
+
+        // Custom Message Box (Replaces alert/confirm)
+        const showMessage = (message) => {
+            const existingMsg = document.getElementById('messageBox');
+            if (existingMsg) existingMsg.remove();
+
+            const msgBox = document.createElement('div');
+            msgBox.id = 'messageBox';
+            msgBox.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-rose-600 text-white px-6 py-3 rounded-lg shadow-xl transition-opacity duration-300 z-[9999]';
+            msgBox.textContent = message;
+            document.body.appendChild(msgBox);
             
-            if (!studentName) {
-                alert('Please select a student');
+            setTimeout(() => {
+                msgBox.style.opacity = '0';
+                setTimeout(() => msgBox.remove(), 300);
+            }, 3000);
+        };
+
+        // --- Auto Download Logic ---
+        downloadAllBtn.addEventListener('click', () => {
+            downloadAllPhotos();
+        });
+
+        function downloadPhoto(photo, index) {
+            // Use a short delay (e.g., 500ms) to prevent the browser from blocking multiple downloads.
+            setTimeout(() => {
+                const link = document.createElement('a');
+                link.href = photo.url;
+                link.download = `S&M_Wedding_${photo.caption.replace(/\s+/g, '_')}_${photo.id}.jpg`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, index * 500); 
+        }
+
+        function downloadAllPhotos() {
+            if (filteredPhotos.length === 0) {
+                showMessage("No photos to download. Try selecting a category first.");
                 return;
             }
+
+            showMessage(`Starting download of ${filteredPhotos.length} photos. Please check your downloads folder!`);
             
-            if (!permissionDate) {
-                alert('Please select a date');
-                return;
-            }
-            
-            if (addPermission(studentName, permissionDate)) {
-                permissionStudentSelect.value = '';
-            }
+            filteredPhotos.forEach((photo, index) => {
+                downloadPhoto(photo, index);
+            });
+        }
+        // --- End Auto Download Logic ---
+
+
+        // Enter gallery
+        document.getElementById('enterGalleryBtn').addEventListener('click', () => {
+            landingPage.style.transition = 'opacity 1s ease';
+            landingPage.style.opacity = '0';
+            setTimeout(() => {
+                landingPage.classList.add('hidden');
+                mainGallery.classList.remove('hidden');
+                setHeroPadding(); // Calculate and set padding when entering the gallery
+                renderGallery();
+                // Show music player in main gallery
+                showMusicPlayer();
+            }, 1000);
         });
+        
+        // --- Smart Scroll Logic to Hide Category Bar ---
+        function handleScroll() {
+            // Only run if the gallery is visible
+            if (mainGallery.classList.contains('hidden')) return;
+            
+            const st = window.pageYOffset || document.documentElement.scrollTop;
+            const isVisible = categoryNav.classList.contains('max-h-96');
 
-        // Function to show/hide sections
-        function showSection(sectionId) {
-            try {
-                const allSections = [dailyAttendanceSection, adminSection, adminPasswordSection];
-                const allButtons = [showDailyBtn, showAdminBtn];
-
-                allSections.forEach(section => {
-                    if (section.id === sectionId) {
-                        section.classList.remove('hidden');
-                    } else {
-                        section.classList.add('hidden');
-                    }
-                });
-
-                allButtons.forEach(button => {
-                    if ((button.id === 'showDailyBtn' && sectionId === 'dailyAttendanceSection') || 
-                        (button.id === 'showAdminBtn' && (sectionId === 'adminSection' || sectionId === 'adminPasswordSection'))) {
-                        button.classList.remove('bg-gray-500');
-                        button.classList.add('bg-indigo-500');
-                    } else {
-                        button.classList.remove('bg-indigo-500');
-                        button.classList.add('bg-gray-500');
-                    }
-                });
-            } catch (error) {
-                console.error('Error in showSection:', error);
+            if (st > lastScrollTop && st > scrollThreshold) {
+                // Scrolling Down past threshold: Hide the category bar
+                if (isVisible) {
+                    categoryNav.classList.remove('max-h-96', 'opacity-100', 'pb-4', 'pt-2');
+                    categoryNav.classList.add('max-h-0', 'opacity-0', 'pb-0', 'pt-0', 'pointer-events-none');
+                    // Recalculate padding after state change
+                    setHeroPadding(); 
+                }
+            } else if (st <= 50) {
+                // Scrolling Up to near the top: Show the category bar
+                if (!isVisible) {
+                    categoryNav.classList.add('max-h-96', 'opacity-100', 'pb-4', 'pt-2');
+                    categoryNav.classList.remove('max-h-0', 'opacity-0', 'pb-0', 'pt-0', 'pointer-events-none');
+                    // Recalculate padding after state change
+                    setHeroPadding();
+                }
             }
+            
+            lastScrollTop = st <= 0 ? 0 : st;
         }
 
-        showDailyBtn.addEventListener('click', () => showSection('dailyAttendanceSection'));
-        showAdminBtn.addEventListener('click', () => showSection('adminPasswordSection'));
-        submitPasswordBtn.addEventListener('click', handleAdminPassword);
-        adminPasswordInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
-                handleAdminPassword();
-            }
+        window.addEventListener('scroll', handleScroll);
+        // --- End Smart Scroll Logic ---
+
+
+        // Render gallery
+        function renderGallery() {
+            filteredPhotos = currentCategory === 'all' 
+                ? [...photos] 
+                : photos.filter(p => p.category === currentCategory);
+
+            document.getElementById('photoCount').textContent = `${filteredPhotos.length} photos`;
+
+            photoGallery.innerHTML = filteredPhotos.map((photo, index) => `
+                <div class="photo-card cursor-pointer rounded-xl overflow-hidden bg-white shadow-lg" onclick="openLightbox(${photo.id})" style="animation: fadeIn 0.5s ease forwards; animation-delay: ${index * 0.05}s; opacity: 0;">
+                    <div class="relative overflow-hidden ${photo.height === 'tall' ? 'aspect-[3/4]' : 'aspect-[4/3]'}">
+                        <!-- Added onerror fallback for images -->
+                        <img src="${photo.url}" alt="${photo.caption}" class="w-full h-full object-cover" 
+                            onerror="this.onerror=null; this.src='https://placehold.co/800x600/b76e79/ffffff?text=Photo+Error'">
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Category filter
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = btn.dataset.category;
+                renderGallery();
+            });
         });
 
-        // Prevent form submission on Enter key in input fields
-        newStudentNameInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                addMasterStudent();
-            }
-        });
-
-        // Initial app load
-        window.addEventListener('load', () => {
-            console.log('Window loaded, initializing app...');
-            initializeApp();
-            showSection('dailyAttendanceSection');
+        // Open lightbox
+        function openLightbox(id) {
+            const photo = photos.find(p => p.id === id);
+            currentPhotoIndex = filteredPhotos.findIndex(p => p.id === id);
             
-            // Add some sample students if empty
-            if (appData.masterStudents.length === 0) {
-                const sampleStudents = [
+            document.getElementById('lightboxImage').src = photo.url;
+            document.getElementById('lightboxTitle').textContent = photo.caption;
+            document.getElementById('lightboxCategory').textContent = photo.category;
+            document.getElementById('photoIndex').textContent = `${currentPhotoIndex + 1} of ${filteredPhotos.length}`;
+            
+            lightboxModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
 
-    {"name": "ኑሀሚን አንድነት", "gender": "female"},
-    {"name": "ሳሮን ዳንኤል", "gender": "female"},
-    {"name": "አቤኔዘር ይርጋለም", "gender": "male"},
-    {"name": "ሜሮን ግርማ", "gender": "female"},
-    {"name": "ናፍያድ ቀነኒሳ", "gender": "male"},
-    {"name": "ፅናት ወልዱ", "gender": "female"},
-    {"name": "ቅድስት ታደሰ", "gender": "female"},
-    {"name": "ምህረት ጋሻው", "gender": "female"},
-    {"name": "ዮርዳኖስ ታጠቅ", "gender": "female"},
-    {"name": "ናታኒም ምትኩ", "gender": "male"},
-    {"name": "አቤኔዘር ጥላሁን", "gender": "male"},
-    {"name": "ኑሀሚን ታልጌታ", "gender": "female"},
-    {"name": "አማኑኤል ቀነኒሳ", "gender": "male"},
-    {"name": "ናታን ስዮም", "gender": "male"},
-    {"name": "ተመስገን ተ/ብርሀን", "gender": "male"},
-    {"name": "ፋኑኤል እንዳልካቸው", "gender": "male"},
-    {"name": "ማራናታ ዝናዬ", "gender": "female"},
-    {"name": "ማራማዊት ዮናስ", "gender": "female"},
-    {"name": "እድላዊት ደስታ", "gender": "female"},
-    {"name": "ኤልዳና አበበ", "gender": "male"},
-    {"name": "ሜሮን ስዮም", "gender": "female"},
-    {"name": "ካሌብ ሐኮንን", "gender": "male"},
-    {"name": "ዳዊት እንዳየ", "gender": "male"},
-    {"name": "በፀሎት ዘመተ", "gender": "female"},
-    {"name": "የአብ ዘር ይድነቃቸው", "gender": "female"},
-    {"name": "አቢሲኒያ ፍቃዱ", "gender": "female"},
-    {"name": "ሶሊያና ሀይሉ", "gender": "female"},
-    {"name": "ህይወት ታሪኩ", "gender": "female"},
-    {"name": "በእምነት ከፍያለው", "gender": "female"},
-    {"name": "ፍቅር አዲስ", "gender": "male"},
-    {"name": "አብርሀም ወንድሜ", "gender": "male"},
-    {"name": "መክሊት አራጌ", "gender": "female"},
-    {"name": "ምኞት ታደለ", "gender": "female"},
-    {"name": "ብሌን ካሳሁን", "gender": "female"},
-    {"name": "ኬና ቶሌሳ", "gender": "male"},
-    {"name": "ያብስራ ካሳሁን", "gender": "female"},
-    {"name": "ናትናኤል ሽመልስ", "gender": "male"},
-    {"name": "ሄኖክ ጉልማ", "gender": "male"},
-    {"name": "ቃልአብ ቁምላቸው", "gender": "male"},
-    {"name": "ኤዶምያስ ዘረፈ", "gender": "male"},
-    {"name": "ሱራፊል ምንዳ", "gender": "male"},
-    {"name": "አሸናፊ ፍቅሪ", "gender": "male"},
-    {"name": "በእምነት አንበሳ", "gender": "male"},
-    {"name": "በሱፍቃድ ዘሪሁን", "gender": "male"},
-    {"name": "ኪሩቤል ነጋ", "gender": "male"},
-    {"name": "በፀሎት ዘመት", "gender": "female"},
-    {"name": "መልክኤል እዮብ", "gender": "male"},
-    {"name": "ፍሌበር ደረጀ", "gender": "male"},
-    {"name": "ህይወት ታሪኩ", "gender": "female"},
-    {"name": "ፍቅር አዲስ", "gender": "male"},
-    {"name": "ህይወት ተመስገን", "gender": "female"},
-    {"name": "ባምላክ አለሜነህ", "gender": "male"},
-    {"name": "ቅድስት አሸናፊ", "gender": "female"},
-    {"name": "ሰላም አሸናፊ", "gender": "female"},
-    {"name": "ቅድስት መላኩ", "gender": "female"},
-    {"name": "ሜላት መንክር", "gender": "female"},
-    {"name": "ኤልዳና አበበ", "gender": "male"},
-    {"name": "ናታኒም ጌታሁን", "gender": "male"},
-    {"name": "ኤልያና ኤርምያስ", "gender": "female"},
-    {"name": "አኪያ ባርክልኝ", "gender": "female"},
-    {"name": "ይስሀቅ አብርሀም", "gender": "male"},
-    {"name": "እዮኤል ደረጀ", "gender": "male"},
-    {"name": "ሱራፊል ገ/ማርያም", "gender": "female"},
-    {"name": "አዶናይ ደረጀ", "gender": "male"},
-    {"name": "ማእዶት ተገኘ", "gender": "female"},
-    {"name": "አቤል ነጋ", "gender": "male"}
-  
+        // Close lightbox
+        document.getElementById('closeLightbox').addEventListener('click', () => {
+            lightboxModal.classList.add('hidden');
+            document.body.style.overflow = '';
+        });
 
+        // Navigate photos
+        document.getElementById('prevPhoto').addEventListener('click', () => {
+            currentPhotoIndex = (currentPhotoIndex - 1 + filteredPhotos.length) % filteredPhotos.length;
+            openLightbox(filteredPhotos[currentPhotoIndex].id);
+        });
 
+        document.getElementById('nextPhoto').addEventListener('click', () => {
+            currentPhotoIndex = (currentPhotoIndex + 1) % filteredPhotos.length;
+            openLightbox(filteredPhotos[currentPhotoIndex].id);
+        });
 
-                ];
-                
-                if (confirm("No students found. Would you like to add some sample students?")) {
-                    appData.masterStudents = sampleStudents;
-                    localStorage.setItem('attendanceData', JSON.stringify(appData));
-                    initializeApp();
+        // Slideshow
+        document.getElementById('slideshowBtn').addEventListener('click', () => {
+            currentPhotoIndex = 0;
+            updateSlideshowImage();
+            slideshowModal.classList.remove('hidden');
+            startSlideshow();
+        });
+
+        document.getElementById('closeSlideshow').addEventListener('click', () => {
+            stopSlideshow();
+            slideshowModal.classList.add('hidden');
+        });
+
+        function updateSlideshowImage() {
+            document.getElementById('slideshowImage').src = filteredPhotos[currentPhotoIndex].url;
+        }
+
+        function startSlideshow() {
+            isPlaying = true;
+            document.getElementById('playPauseIcon').className = 'fas fa-pause';
+            slideshowInterval = setInterval(() => {
+                currentPhotoIndex = (currentPhotoIndex + 1) % filteredPhotos.length;
+                updateSlideshowImage();
+            }, 3000); // 3-second slide delay
+        }
+
+        function stopSlideshow() {
+            isPlaying = false;
+            document.getElementById('playPauseIcon').className = 'fas fa-play';
+            clearInterval(slideshowInterval);
+        }
+
+        document.getElementById('slideshowPlayPause').addEventListener('click', () => {
+            if (isPlaying) {
+                stopSlideshow(); // Toggle off
+            } else {
+                startSlideshow(); // Toggle on
+            }
+        });
+
+        document.getElementById('slideshowPrev').addEventListener('click', () => {
+            stopSlideshow(); // Stop when manually navigating
+            currentPhotoIndex = (currentPhotoIndex - 1 + filteredPhotos.length) % filteredPhotos.length;
+            updateSlideshowImage();
+        });
+
+        document.getElementById('slideshowNext').addEventListener('click', () => {
+            stopSlideshow(); // Stop when manually navigating
+            currentPhotoIndex = (currentPhotoIndex + 1) % filteredPhotos.length;
+            updateSlideshowImage();
+        });
+
+        // Close modals on outside click
+        lightboxModal.addEventListener('click', (e) => {
+            if (e.target === lightboxModal) {
+                lightboxModal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (!lightboxModal.classList.contains('hidden')) {
+                if (e.key === 'ArrowLeft') document.getElementById('prevPhoto').click();
+                if (e.key === 'ArrowRight') document.getElementById('nextPhoto').click();
+                if (e.key === 'Escape') document.getElementById('closeLightbox').click();
+            }
+            if (!slideshowModal.classList.contains('hidden')) {
+                if (e.key === 'Escape') document.getElementById('closeSlideshow').click();
+                if (e.key === ' ') document.getElementById('slideshowPlayPause').click();
+            }
+        });
+
+        // Download single photo
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            const photo = filteredPhotos[currentPhotoIndex];
+            // Re-using the utility function for single download
+            downloadPhoto(photo, 0); 
+            showMessage(`Downloading: ${photo.caption}`);
+        });
+
+        // Share photo 
+        document.getElementById('shareBtn').addEventListener('click', async () => {
+            const photo = filteredPhotos[currentPhotoIndex];
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'Wedding Photo',
+                        text: photo.caption,
+                        url: photo.url
+                    });
+                } catch (err) {
+                    // Sharing failed or was cancelled
+                    console.log('Share cancelled or failed:', err);
                 }
+            } else {
+                // Fallback: Copy link to clipboard
+                const input = document.createElement('input');
+                input.value = photo.url;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showMessage('Photo link copied to clipboard!');
             }
         });
     </script>
 </body>
-
 </html>
